@@ -45,6 +45,8 @@ private:
     Vector3 m_actor2Pos;
     Vector3 m_actor1Velo;
     Vector3 m_actor2Velo;
+    //デモ映像
+    int m_demoMovieHandle;
     //アニメーション関連
     int m_animCountFrame;//戦ってるキャラクターのアニメーションに使う
     int m_textBlinkFrame;//文字の点滅に使う

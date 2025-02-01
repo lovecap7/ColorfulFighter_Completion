@@ -479,10 +479,10 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			{
 				giveVeloP2.x *= -1;
 			}
-			p2.m_knockback = giveVeloP2 * kKnockbackMagin;
-			p2.SetVelo(p2.m_knockback);//相手をずらす
+			p2.SetKnockback(giveVeloP2 * kKnockbackMagin);
+			p2.SetVelo(giveVeloP2 * kKnockbackMagin);//相手をずらす
 			p2.SetHp(p2.GetHp() - (bulletP1.GetGiveDamage() * kScrapMagin));//ダメージ
-			p2.m_guardFrame = bulletP1.GetGiveGuardFrame();//ガード硬直
+			p2.SetGuardFrame(bulletP1.GetGiveGuardFrame());//ガード硬直
 
 			//立ちガード
 			if (!p2.GetIsSquat())
@@ -528,8 +528,8 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			{
 				giveVeloP2.x *= -1;
 			}
-			p2.m_knockback = giveVeloP2;
-			p2.SetVelo(p2.m_knockback);//相手をずらす
+			p2.SetKnockback(giveVeloP2);
+			p2.SetVelo(giveVeloP2);//相手をずらす
 			p2.SetHp(p2.GetHp() - bulletP1.GetGiveDamage());//ダメージ
 			p2.SetNoActFrame(bulletP1.GetGiveNoActFrame());//硬直差
 
@@ -566,10 +566,10 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			{
 				giveVeloP1.x *= -1;
 			}
-			p1.m_knockback = giveVeloP1 * kKnockbackMagin;
-			p1.SetVelo(p1.m_knockback);//相手をずらす
+			p1.SetKnockback(giveVeloP1* kKnockbackMagin);
+			p1.SetVelo(giveVeloP1* kKnockbackMagin);//相手をずらす
 			p1.SetHp(p1.GetHp() - (bulletP2.GetGiveDamage() * kScrapMagin));//ダメージ
-			p1.m_guardFrame = bulletP2.GetGiveGuardFrame();//ガード硬直
+			p1.SetGuardFrame(bulletP2.GetGiveGuardFrame());//ガード硬直
 			//立ちガード
 			if (!p1.GetIsSquat())
 			{
@@ -614,8 +614,8 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			{
 				giveVeloP1.x *= -1;
 			}
-			p1.m_knockback = giveVeloP1;
-			p1.SetVelo(p1.m_knockback);//相手をずらす
+			p1.SetKnockback(giveVeloP1);
+			p1.SetVelo(giveVeloP1);//相手をずらす
 			p1.SetHp(p1.GetHp() - bulletP2.GetGiveDamage());//ダメージ
 			p1.SetNoActFrame(bulletP2.GetGiveNoActFrame());//硬直差
 
@@ -671,8 +671,8 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			p2.LoadStateHit();//ヒットモーション
 		}
 
-		p2.m_knockback = giveVeloP2;
-		p2.SetVelo(p2.m_knockback);//相手をずらす
+		p2.SetKnockback(giveVeloP2);
+		p2.SetVelo(giveVeloP2);//相手をずらす
 
 
 		//空中の敵に攻撃を当てたら
@@ -704,8 +704,8 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			p1.SetNoActFrame(p2.GetGiveNoActFrame());//硬直差
 			p1.LoadStateHit();//ヒットモーション
 		}
-		p1.m_knockback = giveVeloP1;
-		p1.SetVelo(p1.m_knockback);//相手をずらす
+		p1.SetKnockback(giveVeloP1);
+		p1.SetVelo(giveVeloP1);//相手をずらす
 
 
 		//ダメージ
@@ -763,7 +763,10 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 				giveVeloP2.x = kGiveVeloPowerX;
 			}
 			//相手が左側なら反転
-			if ((p2.GetPos().x < p1.GetPos().x))
+			//左の壁に当たってるかをチェックするのは左の壁に当たっている敵に
+			//空中攻撃を当てると当たったプレイヤーが右に行ってしまい空いたスペースに
+			//当てたプレイヤーが入ってしまうのでそれを防ぐために追加した条件
+			if ((p2.GetPos().x < p1.GetPos().x) || ColCheckLeftWall(p1, camera))
 			{
 				giveVeloP2.x *= -1;
 			}
@@ -782,8 +785,8 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 				p2.SetNoActFrame(p1.GetGiveNoActFrame());//硬直差
 				p2.LoadStateHit();//ヒットモーション
 			}
-			p2.m_knockback = giveVeloP2;
-			p2.SetVelo(p2.m_knockback);//相手をずらす
+			p2.SetKnockback(giveVeloP2);
+			p2.SetVelo(giveVeloP2);//相手をずらす
 			p2.SetHp(p2.GetHp() - p1.GetGiveDamage());//ダメージ
 
 			//ヒットの音
@@ -796,7 +799,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 		{
 			giveVeloP2.y = 0;
 			//相手が左側なら反転
-			if ((p2.GetPos().x < p1.GetPos().x))
+			if ((p2.GetPos().x < p1.GetPos().x) || ColCheckLeftWall(p1, camera))
 			{
 				giveVeloP2.x *= -1;
 			}
@@ -814,9 +817,9 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 				gameManager.LoadGuardEffect(p1);
 			}
 
-			p2.m_knockback = giveVeloP2 * kKnockbackMagin;//相手をずらす
-			p2.SetVelo(p2.m_knockback);
-			p2.m_guardFrame = p1.GetGiveGuardFrame();//ガード硬直
+			p2.SetKnockback(giveVeloP2* kKnockbackMagin);//相手をずらす
+			p2.SetVelo(giveVeloP2* kKnockbackMagin);
+			p2.SetGuardFrame(p1.GetGiveGuardFrame());//ガード硬直
 
 			//立ちガード
 			if (!p2.GetIsSquat())
@@ -840,9 +843,11 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 		//壁に当たってる敵を攻撃したとき
 		if (ColCheckWall(p2, camera))
 		{
+			//相手じゃなくて自分がのけぞる
+			giveVeloP2.y = 0;
 			giveVeloP2.x *= -1;
-			p1.m_knockback.x = giveVeloP2.x;
-			p1.SetVeloX(p1.m_knockback.x);
+			p1.SetKnockback(giveVeloP2);
+			p1.SetVelo(giveVeloP2);
 		}
 
 		//エフェクトの位置
@@ -876,7 +881,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 				giveVeloP1.x = kGiveVeloPowerX;
 			}
 			//相手が左側なら反転
-			if ((p1.GetPos().x < p2.GetPos().x))
+			if ((p1.GetPos().x < p2.GetPos().x) || ColCheckLeftWall(p2, camera))
 			{
 				giveVeloP1.x *= -1;
 			}
@@ -896,8 +901,8 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 				p1.LoadStateHit();//ヒットモーション
 			}
 
-			p1.m_knockback = giveVeloP1;
-			p1.SetVelo(p1.m_knockback);//相手をずらす
+			p1.SetKnockback(giveVeloP1);
+			p1.SetVelo(giveVeloP1);//相手をずらす
 			p1.SetHp(p1.GetHp() - p2.GetGiveDamage());//ダメージ
 
 			//ヒットの音
@@ -911,7 +916,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 		{
 			giveVeloP1.y = 0;
 			//相手が左側なら反転
-			if ((p1.GetPos().x < p2.GetPos().x))
+			if ((p1.GetPos().x < p2.GetPos().x) || ColCheckLeftWall(p2, camera))
 			{
 				giveVeloP1.x *= -1;
 			}
@@ -927,9 +932,9 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 				//ガードエフェクト
 				gameManager.LoadGuardEffect(p2);
 			}
-			p1.m_knockback = giveVeloP1 * kKnockbackMagin;
-			p1.SetVelo(p1.m_knockback);//相手をずらす
-			p1.m_guardFrame = p2.GetGiveGuardFrame();//ガード硬直
+			p1.SetKnockback(giveVeloP1* kKnockbackMagin);
+			p1.SetVelo(giveVeloP1* kKnockbackMagin);//相手をずらす
+			p1.SetGuardFrame(p2.GetGiveGuardFrame());//ガード硬直
 			//立ちガード
 			if (!p1.GetIsSquat())
 			{
@@ -951,9 +956,11 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 		//壁に当たってる敵を攻撃したとき
 		if (ColCheckWall(p1, camera))
 		{
+			//相手じゃなくて自分がのけぞる
+			giveVeloP1.y = 0;
 			giveVeloP1.x *= -1;
-			p2.m_knockback.x = giveVeloP1.x;
-			p2.SetVeloX(p2.m_knockback.x);
+			p2.SetKnockback(giveVeloP1);
+			p2.SetVelo(giveVeloP1);
 		}
 
 		//エフェクトの位置

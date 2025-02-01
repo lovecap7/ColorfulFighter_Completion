@@ -2095,7 +2095,8 @@ void Player::AttackedAerialUpdate(Input& input, std::shared_ptr<Player>& enemy, 
 #endif
 	m_chara->GetAnimJump(*this);
 	m_chara->GetHitBoxAttackedAerial(*this);
-	
+	//ガードできない
+	m_isGuard = false;
 	//アニメーションの1枚目を0番として数えるので
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
@@ -2291,7 +2292,6 @@ void Player::GuardStandUpdate(Input& input, std::shared_ptr<Player>& enemy, std:
 	if (m_guardFrame <= 0)
 	{
 		m_guardFrame = 0;
-		m_isGuard = false;
 		//立ち
 		m_update = &Player::IdleStandUpdate;
 		m_draw = &Player::IdleStandDraw;
@@ -2349,7 +2349,6 @@ void Player::GuardSquatUpdate(Input& input, std::shared_ptr<Player>& enemy, std:
 	if (m_guardFrame <= 0)
 	{
 		m_guardFrame = 0;
-		m_isGuard = false;
 		//立ち
 		m_update = &Player::IdleStandUpdate;
 		m_draw = &Player::IdleStandDraw;
@@ -2554,9 +2553,6 @@ void Player::GraspDraw(const Camera& camera)
 //投げる
 void Player::ThrowUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
-
-	//移動量リセット
-	m_velocity.x = 0;
 	//ガードできない
 	m_isGuard = false;
 
@@ -3025,6 +3021,8 @@ void Player::DownAerialDraw(const Camera& camera)
 void Player::StandUpUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	m_animCountFrame++;
+	//ガードできない
+	m_isGuard = false;
 	//アニメーションの1枚目を0番として数えるので
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;

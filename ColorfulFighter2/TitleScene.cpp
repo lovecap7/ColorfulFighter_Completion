@@ -195,20 +195,16 @@ void TitleScene::UpdateNormal(Input& input, Input& input2)
 		m_isFadeIn = true;
 		if (m_fadeManager->IsFinishFadeIn())
 		{
+			m_isFadeIn = false;
+			//デモムービー
 			m_bgm->Stop();
 			m_se->Stop();
-			m_actor1Pos = Vector3(kActor1PosX, kActor1PosY, 0);
-			m_actor1Velo = Vector3(0, 0, 0);
-			m_actor2Pos = Vector3(kActor2PosX, kActor2PosY, 0);
-			m_actor2Velo = Vector3(0, 0, 0);
-			m_actor1.handle = m_walkHandle;
-			m_actor1.animNum = kAnimNum;
-			m_actor1.oneAnimFrame = kIWalkOneAnimFrame;
-			m_actor2.handle = m_walkHandle;
-			m_actor2.animNum = kAnimNum;
-			m_actor2.oneAnimFrame = kIWalkOneAnimFrame;
-			m_update = &TitleScene::UpdateOpening;
-			m_draw = &TitleScene::DrawOpening;
+			//再生
+			PlayMovieToGraph(m_demoMovieHandle);
+			//最初から再生
+			SeekMovieToGraph(m_demoMovieHandle, 0);
+			m_update = &TitleScene::UpdateDemo;
+			m_draw = &TitleScene::DrawDemo;
 			return;
 		}
 	}
@@ -321,12 +317,54 @@ void TitleScene::DrawOpening()
 
 void TitleScene::UpdateDemo(Input& input, Input& input2)
 {
-	
+	m_textBlinkFrame++;
+	if (input.IsTrigger("A") ||
+		input.IsTrigger("B") ||
+		input.IsTrigger("X") ||
+		input.IsTrigger("Y") ||
+		input.IsTrigger("LB") ||
+		input.IsTrigger("RB") ||
+		input2.IsTrigger("A") ||
+		input2.IsTrigger("B") ||
+		input2.IsTrigger("X") ||
+		input2.IsTrigger("Y") ||
+		input2.IsTrigger("LB") ||
+		input2.IsTrigger("RB") ||
+		!GetMovieStateToGraph(m_demoMovieHandle))
+	{
+		//フェードインしてオープニングに進む
+		m_isFadeIn = true;
+	}
+	if (m_fadeManager->IsFinishFadeIn())
+	{
+		//再生を止める
+		PauseMovieToGraph(m_demoMovieHandle);
+		//オープニング
+		m_bgm->Stop();
+		m_se->Stop();
+		m_actor1Pos = Vector3(kActor1PosX, kActor1PosY, 0);
+		m_actor1Velo = Vector3(0, 0, 0);
+		m_actor2Pos = Vector3(kActor2PosX, kActor2PosY, 0);
+		m_actor2Velo = Vector3(0, 0, 0);
+		m_actor1.handle = m_walkHandle;
+		m_actor1.animNum = kAnimNum;
+		m_actor1.oneAnimFrame = kIWalkOneAnimFrame;
+		m_actor2.handle = m_walkHandle;
+		m_actor2.animNum = kAnimNum;
+		m_actor2.oneAnimFrame = kIWalkOneAnimFrame;
+		m_update = &TitleScene::UpdateOpening;
+		m_draw = &TitleScene::DrawOpening;
+		return;
+	}
 }
 
 void TitleScene::DrawDemo()
 {
-	
+	DrawGraph(0, 0, m_demoMovieHandle, false);
+	DrawRotaGraph(Game::kScreenWidth/2, 300,
+		0.5, 0.0,
+		m_titleHandle, true, false);
+	m_fadeManager->BlackFadeDraw(m_isFadeIn);
 }
 
 void TitleScene::UpdateGameStart(Input& input, Input& input2)
@@ -403,7 +441,8 @@ TitleScene::TitleScene(SceneController& contoller) :
 	m_actor2Velo(Vector3(0, 0, 0)),
 	m_startSeHandle(LoadSoundMem("./SE/Select/ReadySE.mp3")),
 	m_actor1(-1, kAnimNum, kIWalkOneAnimFrame),
-	m_actor2(-1, kAnimNum, kIWalkOneAnimFrame)
+	m_actor2(-1, kAnimNum, kIWalkOneAnimFrame),
+	m_demoMovieHandle(LoadGraph("./Movie/DemoMove.mp4"))
 {
 	m_actor1.handle = m_walkHandle;
 	m_actor2.handle = m_walkHandle;
