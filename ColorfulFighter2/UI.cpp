@@ -10,13 +10,17 @@ namespace
 	constexpr float kHpPosXP2 = (Game::kScreenWidth / 2) + 120.0f;//X座標の起点
 	constexpr float kHpPosY = 60.0;
 	constexpr float kHpFrameOffset = 10.0f;
-	
 	//HPバーの横幅と縦幅
 	constexpr float kHpWidth = 500.0f;
 	constexpr float kHpHeight = 50.0f;
+	//HPバーの点滅
+	constexpr int kBlinkHpbarNormalFrame = 60;
+	constexpr int kBlinkHpbarPinchFrame = 10;
+	//ピンチの割合
+	constexpr float kPinchRatio = 3.0f;
 	//プレイヤーのHPの色
-	constexpr unsigned int kHpColorP1 = 0x55ff55;
-	constexpr unsigned int kHpColorP2 = 0x55ff55;
+	constexpr unsigned int kHpColorNormal = 0x33ff33;
+	constexpr unsigned int kHpColorPinch = 0xffff33;
 
 	//KO
 	constexpr float kCenterPosX = Game::kScreenWidth / 2;
@@ -36,8 +40,6 @@ namespace
 
 	constexpr int kDamageDisplayFrame = 60;
 }
-
-
 
 void UI::TimerUI(GameManager& gameManager)
 {
@@ -102,7 +104,7 @@ void UI::UpdateHp(float p1Hp, float p2Hp)
 
 void UI::UpdateRoundFinish(GameManager& gameManager)
 {
-	//どちらかが死んだらKOの表示で時間切れならTimeUpの表示
+	//どちらかが死んだらKOで時間切れならTimeUpの表示
 	if (((m_hpbarP1 <= 0 || m_hpbarP2 <= 0) || gameManager.GetTimer() <= 0) && m_displayFinishRoundCountFrame < kDisplayFinishRoundFrame)
 	{
 		//KOを入れる
@@ -117,13 +119,13 @@ void UI::UpdateRoundFinish(GameManager& gameManager)
 		//3秒くらいKOの文字を表示する
 		m_displayFinishRoundCountFrame++;
 		//インクを動かさないために呼び出す
-		SpriteEffectInit();
+		InitKoSpriteEffect();
 	}
 	else
 	{
 		m_isFinishRound = false;
 		//KOしたら透明にしつつ動かす
-		UpdateSpriteFade();
+		UpdateKoSpriteFade();
 	}
 	//勝ったほうにWinnerの文字
 	if (((m_hpbarP1 <= 0 || m_hpbarP2 <= 0) || gameManager.GetTimer() <= 0) && !m_isFinishRound)
@@ -176,7 +178,7 @@ void UI::UpdateRoundFinish(GameManager& gameManager)
 	}
 }
 
-void UI::UpdateSpriteFade()
+void UI::UpdateKoSpriteFade()
 {
 	m_spriteAlpha -= 5;
 	++m_spriteVelo.y;
@@ -186,7 +188,7 @@ void UI::UpdateSpriteFade()
 	}
 }
 
-void UI::SpriteEffectInit()
+void UI::InitKoSpriteEffect()
 {
 	//消えてくインクの表現に使う
 	m_spriteAlpha = 255;
@@ -227,7 +229,39 @@ void UI::UpdateDamage()
 	}
 }
 
+void UI::UpdateBlinkHpbar()
+{
+	//P1のHPの点滅
+	if (m_blinkHpbarCountFrameP1 >= (m_blinkHpbarIntervalFrameP1 * 2))
+	{
+		m_blinkHpbarCountFrameP1 = 0;
+	}
+	++m_blinkHpbarCountFrameP1;
+	//P2のHPの点滅
+	if (m_blinkHpbarCountFrameP2 >= (m_blinkHpbarIntervalFrameP2 * 2))
+	{
+		m_blinkHpbarCountFrameP2 = 0;
+	}
+	++m_blinkHpbarCountFrameP2;
+}
 
+void UI::CheckPinch()
+{
+	//P1がピンチなら
+	if (m_hpbarMaxP1 / kPinchRatio >= m_hpbarP1)
+	{
+		//点滅速度とHPの色を変える
+		m_blinkHpbarIntervalFrameP1 = kBlinkHpbarPinchFrame;
+		m_hpColorP1 = kHpColorPinch;
+	}
+	//P2がピンチなら
+	if (m_hpbarMaxP2 / kPinchRatio >= m_hpbarP2)
+	{
+		//点滅速度とHPの色を変える
+		m_blinkHpbarIntervalFrameP2 = kBlinkHpbarPinchFrame;
+		m_hpColorP2 = kHpColorPinch;
+	}
+}
 
 void UI::DrawWinNum()
 {
@@ -285,7 +319,6 @@ void UI::DrawHpbar()
 		kHpPosXP2 + kHpWidth, kHpPosY + kHpHeight,
 		0x222222, true);
 
-	//DrawRectModiGraph
 	////P1のダメージ
 	DrawBoxAA(kHpPosXP1, kHpPosY,
 		kHpPosXP1 - kHpWidth * (m_damagebarP1 / m_hpbarMaxP1), kHpPosY + kHpHeight,
@@ -295,14 +328,26 @@ void UI::DrawHpbar()
 		kHpPosXP2 + kHpWidth * (m_damagebarP2 / m_hpbarMaxP2), kHpPosY + kHpHeight,
 		0xff3333, true);
 
+	//点滅P1
+	if (m_blinkHpbarCountFrameP1 >= m_blinkHpbarIntervalFrameP1)
+	{
+		SetDrawBright(200, 200, 200);
+	}
 	////P1のHP
 	DrawBoxAA(kHpPosXP1, kHpPosY,
 		kHpPosXP1 - kHpWidth * (m_hpbarP1 / m_hpbarMaxP1), kHpPosY + kHpHeight,
-		kHpColorP1, true);
+		m_hpColorP1, true);
+	SetDrawBright(255, 255, 255);//元に戻す
+	//点滅P2
+	if (m_blinkHpbarCountFrameP2 >= m_blinkHpbarIntervalFrameP2)
+	{
+		SetDrawBright(200, 200, 200);
+	}
 	////P2のHP
 	DrawBoxAA(kHpPosXP2, kHpPosY,
 		kHpPosXP2 + kHpWidth * (m_hpbarP2 / m_hpbarMaxP2), kHpPosY + kHpHeight,
-		kHpColorP2, true);
+		m_hpColorP2, true);
+	SetDrawBright(255, 255, 255);//元に戻す
 	//フレーム1P
 	DrawGraph(kHpPosXP1 - kHpWidth - kHpFrameOffset, kHpPosY - kHpFrameOffset, m_hpFrameHandle, true);
 	//フレーム2P
@@ -314,6 +359,7 @@ void UI::DrawFinishUI()
 	//KO勝利なら
 	if ((m_roundFinishHandle == m_koHandle) && m_isFinishRound)
 	{
+		//後ろを白くする
 		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xffffff, true);
 	}
 	//決着がついた際の文字（KOとかTIMEUPとか)
@@ -467,7 +513,13 @@ UI::UI(int* selectCommandIndexP1, int* selectCommandIndexP2) :
 	m_roundUiPos(kCenterPosX - 220, kCenterPosY + 50, 0),
 	m_roundUiScale(2.0f),
 	m_spriteAlpha(255),
-	m_spriteVelo()
+	m_spriteVelo(),
+	m_blinkHpbarCountFrameP1(0),
+	m_blinkHpbarCountFrameP2(0),
+	m_blinkHpbarIntervalFrameP1(kBlinkHpbarNormalFrame),
+	m_blinkHpbarIntervalFrameP2(kBlinkHpbarNormalFrame),
+	m_hpColorP1(kHpColorNormal),
+	m_hpColorP2(kHpColorNormal)
 {
 	m_fightHandle = LoadGraph("./img/UI/RoundText/FIGHT.png");//FIGHT
 	m_winnerHandle = LoadGraph("./img/UI/RoundText/WINNER.png");//Winner
@@ -577,8 +629,12 @@ void UI::Init(float p1Hp, float p2Hp, GameManager& gameManager)
 	m_damagebarP2 = m_hpbarP2;
 	m_damageDisplayCountFrameP1 = 0;
 	m_damageDisplayCountFrameP2 = 0;
+	m_blinkHpbarCountFrameP1 = 0;
+	m_blinkHpbarIntervalFrameP1 = kBlinkHpbarNormalFrame;
+	m_blinkHpbarIntervalFrameP2 = kBlinkHpbarNormalFrame;
+	m_hpColorP1 = kHpColorNormal;
+	m_hpColorP2 = kHpColorNormal;
 	//ラウンド○○
-
 	if (gameManager.GetRoundNumber() == 1)
 	{
 		m_roundNumHandle = m_round1Handle;
@@ -601,7 +657,7 @@ void UI::Init(float p1Hp, float p2Hp, GameManager& gameManager)
 	//時間
 	TimerUI(gameManager);
 	//インクの表現の初期化
-	SpriteEffectInit();
+	InitKoSpriteEffect();
 }
 
 
@@ -613,6 +669,10 @@ void UI::Update(float p1Hp, float p2Hp, GameManager& gameManager)
 	m_startRoundCount = gameManager.GetStartRoundCount();
 	//Hp
 	UpdateHp(p1Hp, p2Hp);
+	//体力がピンチかどうか
+	CheckPinch();
+	//Hpバーの点滅
+	UpdateBlinkHpbar();
 	//ラウンド終了時の処理
 	UpdateRoundFinish(gameManager);
 }

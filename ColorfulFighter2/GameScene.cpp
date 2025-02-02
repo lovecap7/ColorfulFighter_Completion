@@ -16,7 +16,7 @@ namespace
 {
 	constexpr float kPlayerFirstPosX = 200.0f;
 	constexpr int kStageWidth = 2600;
-	constexpr int kColorChangeFrame = 120;
+	constexpr int kColorChangeSpeed = 5;
 	constexpr int kColorNum = 8;
 
 	//BGMボリューム
@@ -94,13 +94,30 @@ void GameScene::StageDraw()
 		m_floorBaseHandle, true);
 	//色
 	//色が強いから少し透明にしてる
-	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - m_colorCountFrame);
+	//壁
 	DxLib::DrawGraph(kStageBackPosX + static_cast<int>(m_camera->m_drawOffset.x),
 		kStageBackPosY + static_cast<int>(m_camera->m_drawOffset.y), 
 		m_backColorHandle[m_colorIndex], true);
+	//床
 	DxLib::DrawGraph(kStageFloorPosX + static_cast<int>(m_camera->m_drawOffset.x),
 		kStageFloorPosY + static_cast<int>(m_camera->m_drawOffset.y), 
 		m_floorColorHandle[m_colorIndex], true);
+	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_colorCountFrame);
+	int nextColorIndex = m_colorIndex + 1;
+	if (nextColorIndex >= kColorNum)
+	{
+		nextColorIndex = 0;
+	}
+	//壁
+	DxLib::DrawGraph(kStageBackPosX + static_cast<int>(m_camera->m_drawOffset.x),
+		kStageBackPosY + static_cast<int>(m_camera->m_drawOffset.y),
+		m_backColorHandle[nextColorIndex], true);
+	//床
+	DxLib::DrawGraph(kStageFloorPosX + static_cast<int>(m_camera->m_drawOffset.x),
+		kStageFloorPosY + static_cast<int>(m_camera->m_drawOffset.y),
+		m_floorColorHandle[nextColorIndex], true);
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
@@ -201,10 +218,12 @@ void GameScene::Update(Input& input, Input& input2)
 		m_gameManager->OffIsChangeRound();
 	}
 
-	m_colorCountFrame++;
-	if ((m_colorCountFrame % kColorChangeFrame) == 0)
+	//色を変えていく
+	m_colorCountFrame += kColorChangeSpeed;
+	if (m_colorCountFrame > 255)
 	{
 		m_colorIndex++;
+		m_colorCountFrame = 0;
 	}
 	if (m_colorIndex >= kColorNum)
 	{

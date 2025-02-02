@@ -13,7 +13,7 @@ namespace
 	constexpr int kGroundHeight = Game::kScreenHeight + 400;
 
 	//HP
-	constexpr float kHp = 70.0f;
+	constexpr float kHp = 100.0f;
 
 	//èdóÕ
 	constexpr float kGravityPower = 3.2f;
@@ -95,7 +95,7 @@ Player::Player(PlayerIndex playerIndex, int* selectCommandIndex,CharaColorIndex 
 	m_jumpVelo(0, kJumpPowerY,0),
 	m_giveThrowVelo(),
 	m_isLeft(false),
-	m_hp(100),
+	m_hp(kHp),
 	m_isGround(true),
 	m_isHitAttack(false),
 	m_isHitGrasp(false),
