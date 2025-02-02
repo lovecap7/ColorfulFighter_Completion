@@ -444,8 +444,10 @@ void ResultScene::Update(Input& input, Input& input2)
 	}
 	else
 	{
-		ResultFinish(input, input2);
+		//ボタンを押したらスキップ
+		SkipResult(input, input2);
 	}
+	//ボタンの大きさを変える
 	ChangeBottunScale(m_isDecideP1, m_selectBottunScaleP1);
 	ChangeBottunScale(m_isDecideP2, m_selectBottunScaleP2);
 }
@@ -478,7 +480,7 @@ bool ResultScene::CheckDecidedMenu()
 	return false;
 }
 
-void ResultScene::ResultFinish(Input& input, Input& input2)
+void ResultScene::SkipResult(Input& input, Input& input2)
 {
 	//BGMの再生が終わったら切り替え
 	if (m_bgm->CheckEndBGM())
@@ -561,7 +563,7 @@ void ResultScene::Draw()
 	DrawMenu();
 
 	//フェード
-	m_fadeManager->BlackFadeDraw(m_isFadeIn);
+	m_fadeManager->DrawBlackFade(m_isFadeIn);
 	//なうろーでぃんぐ
 	if (m_fadeManager->IsFinishFadeIn())
 	{

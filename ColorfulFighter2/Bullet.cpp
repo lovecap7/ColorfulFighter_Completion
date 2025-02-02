@@ -59,7 +59,7 @@ namespace
 	constexpr int kFinishDisappearAnimIndex = 205;
 }
 
-void Bullet::HadouUpdate(Player& enemy, Bullet& otherBullet, Camera& camera)
+void Bullet::UpdateHadou(Player& enemy, Bullet& otherBullet, Camera& camera)
 {
 	if (m_isShooting)
 	{
@@ -68,10 +68,10 @@ void Bullet::HadouUpdate(Player& enemy, Bullet& otherBullet, Camera& camera)
 
 		//敵に当たったかどうかをチェック
 		//当たった後の処理はCollisionCheckがやる（1P側と2P側で処理の順で優劣がつかないようにするため）
-		m_isHitPlayer = HitCheckPlayer(enemy);
+		m_isHitPlayer = CheckHitPlayer(enemy);
 
 		//弾同士で相殺
-		if (HitCheckBullet(otherBullet) && otherBullet.GetIsShooting())
+		if (CheckHitBullet(otherBullet) && otherBullet.GetIsShooting())
 		{
 			Disappear();
 			otherBullet.Disappear();
@@ -107,7 +107,7 @@ void Bullet::HadouUpdate(Player& enemy, Bullet& otherBullet, Camera& camera)
 	}
 }
 
-void Bullet::HadouDraw(Camera& camera)
+void Bullet::DrawHadou(Camera& camera)
 {
 	//弾
 	//左に進んでるなら左を向く
@@ -131,7 +131,7 @@ void Bullet::HadouDraw(Camera& camera)
 		kBulletScale, 0.0f, m_blueBulletHandle, true, isLeft);
 }
 
-void Bullet::SonicUpdate(Player& enemy, Bullet& otherBullet, Camera& camera)
+void Bullet::UpdateSonic(Player& enemy, Bullet& otherBullet, Camera& camera)
 {
 	if (m_isShooting)
 	{
@@ -141,10 +141,10 @@ void Bullet::SonicUpdate(Player& enemy, Bullet& otherBullet, Camera& camera)
 
 		//敵に当たったかどうかをチェック
 		//当たった後の処理はCollisionCheckがやる（1P側と2P側で処理の順で優劣がつかないようにするため）
-		m_isHitPlayer = HitCheckPlayer(enemy);
+		m_isHitPlayer = CheckHitPlayer(enemy);
 
 		//弾同士で相殺
-		if (HitCheckBullet(otherBullet) && otherBullet.GetIsShooting())
+		if (CheckHitBullet(otherBullet) && otherBullet.GetIsShooting())
 		{
 			Disappear();
 			otherBullet.Disappear();
@@ -180,7 +180,7 @@ void Bullet::SonicUpdate(Player& enemy, Bullet& otherBullet, Camera& camera)
 	}
 }
 
-void Bullet::SonicDraw(Camera& camera)
+void Bullet::DrawSonic(Camera& camera)
 {
 	////弾
 //左に進んでるなら左を向く
@@ -204,7 +204,7 @@ void Bullet::SonicDraw(Camera& camera)
 		kBulletScale, 0.0f, m_yellowBulletHandle, true, isLeft);
 }
 
-void Bullet::WaveUpdate(Player& enemy, Bullet& otherBullet, Camera& camera)
+void Bullet::UpdateWave(Player& enemy, Bullet& otherBullet, Camera& camera)
 {
 	if (m_isShooting)
 	{
@@ -214,10 +214,10 @@ void Bullet::WaveUpdate(Player& enemy, Bullet& otherBullet, Camera& camera)
 
 		//敵に当たったかどうかをチェック
 		//当たった後の処理はCollisionCheckがやる（1P側と2P側で処理の順で優劣がつかないようにするため）
-		m_isHitPlayer = HitCheckPlayer(enemy);
+		m_isHitPlayer = CheckHitPlayer(enemy);
 
 		//弾同士で相殺
-		if (HitCheckBullet(otherBullet) && otherBullet.GetIsShooting())
+		if (CheckHitBullet(otherBullet) && otherBullet.GetIsShooting())
 		{
 			Disappear();
 			otherBullet.Disappear();
@@ -253,7 +253,7 @@ void Bullet::WaveUpdate(Player& enemy, Bullet& otherBullet, Camera& camera)
 	}
 }
 
-void Bullet::WaveDraw(Camera& camera)
+void Bullet::DrawWave(Camera& camera)
 {
 	////弾
 	//左に進んでるなら左を向く
@@ -292,8 +292,8 @@ Bullet::Bullet(PlayerIndex playerIndex):
 	m_startAnimIndex(kStartHadouAnimIndex),
 	m_finishAnimIndex(kFinishHadouAnimIndex),
 	m_animCountFrame(0),
-	m_update(&Bullet::HadouUpdate),
-	m_draw(&Bullet::HadouDraw)
+	m_update(&Bullet::UpdateHadou),
+	m_draw(&Bullet::DrawHadou)
 {
 	m_blueBulletHandle = LoadGraph("./img/Bullet/BlueBullet160x160.png");//青
 	m_yellowBulletHandle = LoadGraph("./img/Bullet/YellowBullet160x160.png");//黄色
@@ -409,10 +409,10 @@ void Bullet::LoadHadou(Player& player, float damage, int giveNoActFrame, int giv
 	InitHitBoxHadou();
 	//相手に与える効果
 	SetShotEffect(damage, giveNoActFrame, giveGuardFrame);
-	if (m_update != &Bullet::HadouUpdate || m_draw != &Bullet::HadouDraw)
+	if (m_update != &Bullet::UpdateHadou || m_draw != &Bullet::DrawHadou)
 	{
-		m_update = &Bullet::HadouUpdate;
-		m_draw = &Bullet::HadouDraw;
+		m_update = &Bullet::UpdateHadou;
+		m_draw = &Bullet::DrawHadou;
 	}
 }
 //ソニックブーム
@@ -457,10 +457,10 @@ void Bullet::LoadSonic(Player& player, float damage, int giveNoActFrame, int giv
 	InitHitBoxSonic();
 	//相手に与える効果
 	SetShotEffect(damage, giveNoActFrame, giveGuardFrame);
-	if (m_update != &Bullet::SonicUpdate || m_draw != &Bullet::SonicDraw)
+	if (m_update != &Bullet::UpdateSonic || m_draw != &Bullet::DrawSonic)
 	{
-		m_update = &Bullet::SonicUpdate;
-		m_draw = &Bullet::SonicDraw;
+		m_update = &Bullet::UpdateSonic;
+		m_draw = &Bullet::DrawSonic;
 	}
 }
 //闇払い
@@ -508,14 +508,14 @@ void Bullet::LoadWave(Player& player, float damage, int giveNoActFrame, int give
 	InitHitBoxWave();
 	//相手に与える効果
 	SetShotEffect(damage, giveNoActFrame, giveGuardFrame);
-	if (m_update != &Bullet::WaveUpdate || m_draw != &Bullet::WaveDraw)
+	if (m_update != &Bullet::UpdateWave || m_draw != &Bullet::DrawWave)
 	{
-		m_update = &Bullet::WaveUpdate;
-		m_draw = &Bullet::WaveDraw;
+		m_update = &Bullet::UpdateWave;
+		m_draw = &Bullet::DrawWave;
 	}
 }
 
-bool Bullet::HitCheckPlayer(Player& enemy)
+bool Bullet::CheckHitPlayer(Player& enemy)
 {
 	//攻撃の判定がないならチェックしない
 	if (m_hitBoxAttack.x1 == 0 &&
@@ -669,7 +669,7 @@ bool Bullet::HitCheckPlayer(Player& enemy)
 	return false;
 }
 
-bool Bullet::HitCheckBullet(Bullet& otherBullet)
+bool Bullet::CheckHitBullet(Bullet& otherBullet)
 {
 
 	//X、Y方向の離れている距離を絶対値化して取得

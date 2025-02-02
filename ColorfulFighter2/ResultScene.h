@@ -27,11 +27,9 @@ private:
     double m_p2ImageScale;
     double m_addScale;
 	void DrawPlayerImage();
-
     //背景
 	int m_backGroundHandle;
 	void DrawBackGround();
-   
     //BGM
     std::shared_ptr<BGM> m_bgm;
     int m_menuBgm;
@@ -43,12 +41,12 @@ private:
     //セリフ
     int m_serifHandle;
 	void DrawSerif();
-
     //メニュー
 	bool m_isSelecting;
     int m_selectMenuIndexP1;
     int m_selectMenuIndexP2;
     void SelectMenu(Input& input,int& selectMenuIndex, bool& isDecide, std::shared_ptr<SE>& se);
+    //決定した項目から実行する関数を決める
     bool CheckDecidedMenu();
     void Rematch();//再戦
     void Reselect();//コマンドの選び直し
@@ -62,19 +60,18 @@ private:
     double m_selectBottunScaleP1;
     double m_selectBottunScaleP2;
 	void ChangeBottunScale(bool& isSelecting, double& selectBottunScale);
+    //リザルトをスキップしてメニューを表示
+    void SkipResult(Input& input, Input& input2);
     //メニューボタンの表示
 	void DrawMenuBottunP1();
 	void DrawMenuBottunP2();
     //決定
 	bool m_isDecideP1;
 	bool m_isDecideP2;
-
     //点滅
-	int m_blinkCountFrame;//点滅の間隔
+	int m_blinkCountFrame;//フレームを数える
 	int m_blinkCountP1;//点滅のカウント
 	int m_blinkCountP2;//点滅のカウント
-
-
     //フェードインするために使う
     std::shared_ptr<FadeManager> m_fadeManager;
     bool m_isFadeIn;
@@ -84,9 +81,6 @@ public:
     ResultScene(SceneController& controller);
     //派生クラスで実装を実装
     virtual void Update(Input& input, Input& input2) override;
-
-    void ResultFinish(Input& input, Input& input2);
-
     virtual void Draw() override;
 };
 

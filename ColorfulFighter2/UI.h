@@ -119,7 +119,6 @@ private:
 public:
 	UI(int* selectCommandIndexP1, int* selectCommandIndexP2);
 	~UI();
-
 	void Init(float p1Hp, float p2Hp, GameManager& gameManager);
 	void Update(float p1Hp, float p2Hp, GameManager& gameManager);
 	//UI

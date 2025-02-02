@@ -53,7 +53,7 @@ Vector3 CollisionCheck::CreateHitEffectPosPtoP(Player& attacker, Player& defende
 	hitEffectPos.x = (attackPos.x + defenderPos.x) / 2;
 	//高さはお互いが地上の場合は攻撃のY座標に合わせたほうが
 	//違和感がなかったので地上か空中かで条件分岐
-	if (attacker.GetIsGround())
+	if (attacker.IsGround())
 	{
 		//地上
 		hitEffectPos.y = attackPos.y;
@@ -87,15 +87,12 @@ Vector3 CollisionCheck::CreateHitEffectPosBtoP(Bullet& bullet, Player& defender)
 CollisionCheck::CollisionCheck():
 	m_lastVeloP1(),
 	m_lastVeloP2(),
-	m_frameCount(0)
-	
+	m_hitSeHandle(LoadSoundMem("./SE/Hit/Hit1.mp3")),
+	m_guardSeHandle(LoadSoundMem("./SE/Hit/Guard.mp3"))
 {
 	//SE
 	m_seP1 = std::make_shared<SE>();
 	m_seP2 = std::make_shared<SE>();
-	m_hitSeHandle = LoadSoundMem("./SE/Hit/Hit1.mp3");
-	m_guardSeHandle = LoadSoundMem("./SE/Hit/Guard.mp3");
-	
 }
 
 CollisionCheck::~CollisionCheck()
@@ -105,7 +102,6 @@ CollisionCheck::~CollisionCheck()
 void CollisionCheck::Update(Player& p1, Player& p2, Bullet& bulletP1, Bullet& bulletP2, 
 	Camera& camera, GameManager& gameManager)
 {
-	m_frameCount++;
 	if (gameManager.GetTimer() > 0)
 	{
 		AttackProcess(p1, p2, bulletP1, bulletP2, camera, gameManager);
@@ -409,14 +405,14 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 	}
 	
 	//攻撃が当たっていればプレイヤーの移動量を初期化
-	if (p1.GetIsHitAttack() || bulletP1.GetIsHitPlayer())
+	if (p1.IsHitAttack() || bulletP1.GetIsHitPlayer())
 	{
 		p2.SetVeloX(0);
 		p2.SetVeloY(0);
 		//描画を前に
 		gameManager.SetIsDrawFrontP1(true);
 	}
-	if (p2.GetIsHitAttack() || bulletP2.GetIsHitPlayer())
+	if (p2.IsHitAttack() || bulletP2.GetIsHitPlayer())
 	{
 		p1.SetVeloX(0);
 		p1.SetVeloY(0);
@@ -428,18 +424,18 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 	Vector3 giveVeloP2(p1.GetGiveAttackVelo());
 
 	//投げと攻撃が重なっていない場合投げは成立する
-	if (!p1.GetIsHitAttack() && !bulletP1.GetIsHitPlayer() && !p2.GetIsHitAttack() && !bulletP2.GetIsHitPlayer())
+	if (!p1.IsHitAttack() && !bulletP1.GetIsHitPlayer() && !p2.IsHitAttack() && !bulletP2.GetIsHitPlayer())
 	{
 		//投げぬけ
-		if (p1.GetIsHitGrasp() && p2.GetIsHitGrasp() || p1.GetIsThrowSuccess() && p2.GetIsThrowSuccess())
+		if (p1.IsHitGrasp() && p2.IsHitGrasp() || p1.IsThrowSuccess() && p2.IsThrowSuccess())
 		{
 			p1.LoadStateThrowEscape();
 			p2.LoadStateThrowEscape();
-			p1.ResetIsHitGrasp();
-			p2.ResetIsHitGrasp();
+			p1.OffIsHitGrasp();
+			p2.OffIsHitGrasp();
 		}
 		//P1の投げが当たったとき
-		else if (p1.GetIsHitGrasp() && !p2.GetIsHitGrasp())
+		else if (p1.IsHitGrasp() && !p2.IsHitGrasp())
 		{
 			//描画を後ろに
 			//投げるときは後ろにしたほうが見栄えがいい
@@ -447,16 +443,16 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			//投げられ状態にする
 			p2.LoadStateBeThrown();
 			//投げる状態にする
-			p1.ResetIsHitGrasp();
+			p1.OffIsHitGrasp();
 			p1.OnIsThrownSuccess();;
 		}
 		//P2の投げが当たったとき
-		else if (p2.GetIsHitGrasp() && !p1.GetIsHitGrasp())
+		else if (p2.IsHitGrasp() && !p1.IsHitGrasp())
 		{
 			//描画を前に
 			gameManager.SetIsDrawFrontP1(true);
 			p1.LoadStateBeThrown();
-			p2.ResetIsHitGrasp();
+			p2.OffIsHitGrasp();
 			p2.OnIsThrownSuccess();
 		}
 	}
@@ -470,12 +466,12 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 		giveVeloP2.x = bulletP1.GetGiveAttackVelo().x;
 		giveVeloP2.y = 0;
 		//ガードしてたら
-		if (p2.GetIsGuard())
+		if (p2.IsGuard())
 		{
 			//相手が左側なら反転
 			//プレイヤーの攻撃と同時に当たっている場合
 			//最後の攻撃によってベクトルに向きを確定させてほしい
-			if ((p2.GetPos().x < p1.GetPos().x) && !p1.GetIsHitAttack())
+			if ((p2.GetPos().x < p1.GetPos().x) && !p1.IsHitAttack())
 			{
 				giveVeloP2.x *= -1;
 			}
@@ -485,7 +481,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			p2.SetGuardFrame(bulletP1.GetGiveGuardFrame());//ガード硬直
 
 			//立ちガード
-			if (!p2.GetIsSquat())
+			if (!p2.IsSquat())
 			{
 				p2.LoadStateGuardStand();//ガードモーション
 			}
@@ -509,7 +505,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			//カメラ揺らす
 			gameManager.OnIsCameraShake();
 			//空中の敵に攻撃を当てたら
-			if (!p2.GetIsGround())
+			if (!p2.IsGround())
 			{
 				if (giveVeloP2.y == 0)
 				{
@@ -524,7 +520,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			//相手が左側なら反転
 			//プレイヤーの攻撃と同時に当たっている場合
 			//最後の攻撃によってベクトルに向きを確定させてほしい
-			if ((p2.GetPos().x < p1.GetPos().x) && !p1.GetIsHitAttack())
+			if ((p2.GetPos().x < p1.GetPos().x) && !p1.IsHitAttack())
 			{
 				giveVeloP2.x *= -1;
 			}
@@ -557,12 +553,12 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 		giveVeloP1.x = bulletP2.GetGiveAttackVelo().x;;
 		giveVeloP1.y = 0;
 		//ガードしてたら
-		if (p1.GetIsGuard())
+		if (p1.IsGuard())
 		{
 			//相手が左側なら反転
 			//プレイヤーの攻撃と同時に当たっている場合
 			//最後の攻撃によってベクトルに向きを確定させてほしい GetIsHitAttack()
-			if ((p1.GetPos().x < p2.GetPos().x) && !p2.GetIsHitAttack())
+			if ((p1.GetPos().x < p2.GetPos().x) && !p2.IsHitAttack())
 			{
 				giveVeloP1.x *= -1;
 			}
@@ -571,7 +567,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			p1.SetHp(p1.GetHp() - (bulletP2.GetGiveDamage() * kScrapMagin));//ダメージ
 			p1.SetGuardFrame(bulletP2.GetGiveGuardFrame());//ガード硬直
 			//立ちガード
-			if (!p1.GetIsSquat())
+			if (!p1.IsSquat())
 			{
 				p1.LoadStateGuardStand();//ガードモーション
 			}
@@ -595,7 +591,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			//カメラ揺らす
 			gameManager.OnIsCameraShake();
 			//空中の敵に攻撃を当てたら
-			if (!p1.GetIsGround())
+			if (!p1.IsGround())
 			{
 				if (giveVeloP1.y == 0)
 				{
@@ -610,7 +606,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			//相手が左側なら反転
 			//プレイヤーの攻撃と同時に当たっている場合
 			//最後の攻撃によってベクトルに向きを確定させてほしい GetIsHitAttack()
-			if ((p1.GetPos().x < p2.GetPos().x) && !p2.GetIsHitAttack())
+			if ((p1.GetPos().x < p2.GetPos().x) && !p2.IsHitAttack())
 			{
 				giveVeloP1.x *= -1;
 			}
@@ -637,12 +633,12 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 	}
 
 	//同時に殴った時
-	if (p1.GetIsHitAttack() && p2.GetIsHitAttack())
+	if (p1.IsHitAttack() && p2.IsHitAttack())
 	{
 		//カメラ揺らす
 		gameManager.OnIsCameraShake();
 		//空中の敵に攻撃を当てたら
-		if (!p2.GetIsGround())
+		if (!p2.IsGround())
 		{
 			if (giveVeloP2.y == 0)
 			{
@@ -676,7 +672,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 
 
 		//空中の敵に攻撃を当てたら
-		if (!p1.GetIsGround())
+		if (!p1.IsGround())
 		{
 			if (giveVeloP1.y == 0)
 			{
@@ -735,7 +731,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 		m_seP2->PlayOnce();
 	}
 	//P1が攻撃を当てた時
-	else if (p1.GetIsHitAttack() && !p2.GetIsHitAttack())
+	else if (p1.IsHitAttack() && !p2.IsHitAttack())
 	{
 
 		//攻撃が成功したら
@@ -744,7 +740,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			//カメラ揺らす
 			gameManager.OnIsCameraShake();
 			//ヒットエフェクト
-			if (p1.GetIsCommand())
+			if (p1.IsCommand())
 			{
 				gameManager.LoadSpecialHitEffect(p1);
 			}
@@ -754,7 +750,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			}
 
 			//空中の敵に攻撃を当てたら
-			if (!p2.GetIsGround())
+			if (!p2.IsGround())
 			{
 				if (giveVeloP2.y == 0)
 				{
@@ -805,7 +801,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			}
 
 			//この攻撃がコマンドの技なら削れる
-			if (p1.GetIsCommand())
+			if (p1.IsCommand())
 			{
 				p2.SetHp(p2.GetHp() - (p1.GetGiveDamage() * kScrapMagin));//ダメージ
 				//削り
@@ -822,7 +818,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			p2.SetGuardFrame(p1.GetGiveGuardFrame());//ガード硬直
 
 			//立ちガード
-			if (!p2.GetIsSquat())
+			if (!p2.IsSquat())
 			{
 				p2.LoadStateGuardStand();//ガードモーション
 			}
@@ -855,7 +851,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 		p1.ResetAttackBox();	
 	}
 	//P2が攻撃を当てた時
-	else if (!p1.GetIsHitAttack() && p2.GetIsHitAttack())
+	else if (!p1.IsHitAttack() && p2.IsHitAttack())
 	{
 		//攻撃が成功したら
 		if (CheckSuccessAttack(p2, p1))
@@ -863,7 +859,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			//カメラ揺らす
 			gameManager.OnIsCameraShake();
 			//ヒットエフェクト
-			if (p2.GetIsCommand())
+			if (p2.IsCommand())
 			{
 				gameManager.LoadSpecialHitEffect(p2);
 			}
@@ -872,7 +868,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 				gameManager.LoadNormalHitEffect(p2);
 			}
 			//空中の敵に攻撃を当てたら
-			if (!p1.GetIsGround())
+			if (!p1.IsGround())
 			{
 				if (giveVeloP1.y == 0)
 				{
@@ -921,7 +917,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 				giveVeloP1.x *= -1;
 			}
 			//この攻撃がコマンドの技なら削れる
-			if (p2.GetIsCommand())
+			if (p2.IsCommand())
 			{
 				p1.SetHp(p1.GetHp() - (p2.GetGiveDamage() * kScrapMagin));//ダメージ
 				//削り
@@ -936,7 +932,7 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 			p1.SetVelo(giveVeloP1* kKnockbackMagin);//相手をずらす
 			p1.SetGuardFrame(p2.GetGiveGuardFrame());//ガード硬直
 			//立ちガード
-			if (!p1.GetIsSquat())
+			if (!p1.IsSquat())
 			{
 				p1.LoadStateGuardStand();//ガードモーション
 			}
@@ -969,11 +965,11 @@ void CollisionCheck::AttackProcess(Player& p1, Player& p2, Bullet& bulletP1, Bul
 	}
 	
 	//攻撃の処理が終わったら判定を消す
-	if (p1.GetIsHitAttack() || p2.GetIsHitAttack())
+	if (p1.IsHitAttack() || p2.IsHitAttack())
 	{
 		//リセット
-		p1.ResetIsHitAttack();
-		p2.ResetIsHitAttack();
+		p1.OffIsHitAttack();
+		p2.OffIsHitAttack();
 	}
 
 	//プレイヤーのHPが0以下になった場合
@@ -1004,7 +1000,7 @@ bool CollisionCheck::CheckSuccessAttack(Player& attacker, Player& defender)
 	if (currentAttributes == AttackAttributes::Upper)
 	{
 		//ガードをしていたら
-		if (defender.GetIsGuard())
+		if (defender.IsGuard())
 		{
 			return false;
 		}
@@ -1013,7 +1009,7 @@ bool CollisionCheck::CheckSuccessAttack(Player& attacker, Player& defender)
 	else if (currentAttributes == AttackAttributes::Lower)
 	{
 		//しゃがみガードをしていたら
-		if (defender.GetIsGuard() && defender.GetIsSquat())
+		if (defender.IsGuard() && defender.IsSquat())
 		{
 			return false;
 		}
@@ -1022,7 +1018,7 @@ bool CollisionCheck::CheckSuccessAttack(Player& attacker, Player& defender)
 	else if (currentAttributes == AttackAttributes::Middle)
 	{
 		//立ちガードをしていたら
-		if (defender.GetIsGuard() && !defender.GetIsSquat())
+		if (defender.IsGuard() && !defender.IsSquat())
 		{
 			return false;
 		}

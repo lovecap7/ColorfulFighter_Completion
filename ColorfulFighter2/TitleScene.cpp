@@ -221,7 +221,7 @@ void TitleScene::DrawNormal()
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_titleFadeCountFrame);
 	DrawGraph(kTitlePosX, kTitlePosY, m_titleHandle, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	m_fadeManager->BlackFadeDraw(m_isFadeIn);
+	m_fadeManager->DrawBlackFade(m_isFadeIn);
 }
 
 void TitleScene::UpdateOpening(Input& input, Input& input2)
@@ -312,7 +312,7 @@ void TitleScene::DrawOpening()
 {
 	//キャラクターが歩いてくる
 	DrawActor();
-	m_fadeManager->BlackFadeDraw(m_isFadeIn);
+	m_fadeManager->DrawBlackFade(m_isFadeIn);
 }
 
 void TitleScene::UpdateDemo(Input& input, Input& input2)
@@ -364,7 +364,7 @@ void TitleScene::DrawDemo()
 	DrawRotaGraph(Game::kScreenWidth/2, 300,
 		0.5, 0.0,
 		m_titleHandle, true, false);
-	m_fadeManager->BlackFadeDraw(m_isFadeIn);
+	m_fadeManager->DrawBlackFade(m_isFadeIn);
 }
 
 void TitleScene::UpdateGameStart(Input& input, Input& input2)
@@ -386,7 +386,7 @@ void TitleScene::DrawGameStart()
 	DrawActor();
 	DrawBlinkingText();
 	DrawGraph(kTitlePosX, kTitlePosY, m_titleHandle, true);
-	m_fadeManager->WhiteFadeDraw(m_isFadeIn);
+	m_fadeManager->DrawWhiteFade(m_isFadeIn);
 }
 
 //裏で戦っているキャラクター

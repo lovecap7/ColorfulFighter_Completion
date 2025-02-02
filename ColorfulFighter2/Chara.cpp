@@ -80,7 +80,7 @@ Chara::Chara(int* selectCommandIndex, CharaColorIndex charaColorIndex) :
 	m_velocity(),
 	m_handle(-1),//画像
 	m_animNum(0),//アニメーションの数
-	m_oneAnimFrame(0),//アニメーション１枚にかかるフレーム
+	m_oneAnimIntervalFrame(0),//アニメーション１枚にかかるフレーム
 	m_attackAttributes(AttackAttributes::Null),//攻撃属性
 	m_startAttackFrame(0),//攻撃の発生
 	m_finishAttackFrame(0),//攻撃持続終了
@@ -101,17 +101,17 @@ Chara::Chara(int* selectCommandIndex, CharaColorIndex charaColorIndex) :
 		LoadSoundMem("./SE/waza/tatumakiSe.mp3"),
 		LoadSoundMem("./SE/waza/wildSe.mp3")
 	},
-	m_attack1SeHandle(LoadSoundMem("./SE/PlayerBase/voice/Attack1.mp3")),
-	m_attack2SeHandle(LoadSoundMem("./SE/PlayerBase/voice/Attack2.mp3")),
-	m_attack3SeHandle(LoadSoundMem("./SE/PlayerBase/voice/Attack3.mp3")),
-	m_damage1SeHandle(LoadSoundMem("./SE/PlayerBase/voice/Damage1.mp3")),
-	m_damage2SeHandle(LoadSoundMem("./SE/PlayerBase/voice/Damage2.mp3")),
-	m_standUp1SeHandle(LoadSoundMem("./SE/PlayerBase/voice/StandUp1.mp3")),
-	m_standUp2SeHandle(LoadSoundMem("./SE/PlayerBase/voice/StandUp2.mp3"))
+	m_attack1VoiceHandle(LoadSoundMem("./SE/PlayerBase/voice/Attack1.mp3")),
+	m_attack2VoiceHandle(LoadSoundMem("./SE/PlayerBase/voice/Attack2.mp3")),
+	m_attack3VoiceHandle(LoadSoundMem("./SE/PlayerBase/voice/Attack3.mp3")),
+	m_damage1VoiceHandle(LoadSoundMem("./SE/PlayerBase/voice/Damage1.mp3")),
+	m_damage2VoiceHandle(LoadSoundMem("./SE/PlayerBase/voice/Damage2.mp3")),
+	m_standUp1VoiceHandle(LoadSoundMem("./SE/PlayerBase/voice/StandUp1.mp3")),
+	m_standUp2VoiceHandle(LoadSoundMem("./SE/PlayerBase/voice/StandUp2.mp3"))
 {
+	m_se = std::make_shared<SE>();//ボイスを確保
 	//色
-	ColorInit(charaColorIndex);
-	m_se = std::make_shared<SE>();//SEを確保
+	InitColor(charaColorIndex);
 	m_voice = std::make_shared<SE>();//ボイスを確保
 	for (int i = 0; i < 3;++i)
 	{
@@ -124,7 +124,7 @@ Chara::~Chara()
 }
 
 
-void Chara::ColorInit(CharaColorIndex charaColorIndex)
+void Chara::InitColor(CharaColorIndex charaColorIndex)
 {
 	switch (charaColorIndex)
 	{
@@ -752,10 +752,10 @@ void Chara::GetAnimIdleStand(Player& player)
 	/// <summary>
 	/// １つのアニメーションにかかるフレーム
 	/// </summary>
-	m_oneAnimFrame = 4;
+	m_oneAnimIntervalFrame = 4;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 //待機モーションの当たり判定(右向き)
 void Chara::GetHitBoxIdleStand(Player& player)
@@ -805,10 +805,10 @@ void Chara::GetAnimIdleSquat(Player& player)
 {
 	m_handle = m_idleSquatHandel;//しゃがみ待機
 	m_animNum = 6;
-	m_oneAnimFrame = 4;
+	m_oneAnimIntervalFrame = 4;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 void Chara::GetHitBoxIdleSquat(Player& player)
 {
@@ -856,10 +856,10 @@ void Chara::GetAnimWalkFront(Player& player)
 {
 	m_handle = m_walkFrontHandel;//歩き
 	m_animNum = 8;
-	m_oneAnimFrame = 4;
+	m_oneAnimIntervalFrame = 4;
 	player.SetHandle(m_handle);//昇竜拳
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 void Chara::GetHitBoxWalkFront(Player& player)
 {
@@ -907,10 +907,10 @@ void Chara::GetAnimWalkBack(Player& player)
 {
 	m_handle = m_walkBackHandel;//歩き
 	m_animNum = 8;
-	m_oneAnimFrame = 4;
+	m_oneAnimIntervalFrame = 4;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 void Chara::GetHitBoxWalkBack(Player& player)
 {
@@ -958,10 +958,10 @@ void Chara::GetAnimJump(Player& player)
 {
 	m_handle = m_jumpHandel;//ジャンプ
 	m_animNum = 10;
-	m_oneAnimFrame = 4;
+	m_oneAnimIntervalFrame = 4;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 void Chara::GetHitBoxJump(Player& player)
 {
@@ -1010,13 +1010,13 @@ void Chara::GetAnimPunchLight(Player& player)
 	m_handle = m_punchLightHandle;//弱パンチ
 	//全体フレーム14
 	m_animNum = 7;
-	m_oneAnimFrame = 2;
+	m_oneAnimIntervalFrame = 2;
 	m_startAttackFrame = kStartFramePunchLight;//攻撃発生
 	m_finishAttackFrame = kFinishFramePunchLight;//持続終了
 
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1064,7 +1064,7 @@ void Chara::GetHitBoxPunchLight(Player& player)
 void Chara::GetGiveEffectPunchLight(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack1SeHandle);
+	VoiceSe(m_attack1VoiceHandle);
 	m_giveDamage = 3.0f;
 	m_giveNoActFrame = kAllFramePunchLight - kStartFramePunchLight + 4;
 	m_giveGuardFrame = kAllFramePunchLight - kStartFramePunchLight - 1;
@@ -1085,12 +1085,12 @@ void Chara::GetAnimPunchHigh(Player& player)
 	m_handle = m_punchHighHandle;//強パンチ
 	//全体フレーム22
 	m_animNum = 11;
-	m_oneAnimFrame = 2;
+	m_oneAnimIntervalFrame = 2;
 	m_startAttackFrame = kStartFramePunchHigh;//攻撃発生
 	m_finishAttackFrame = 16;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1137,7 +1137,7 @@ void Chara::GetHitBoxPunchHigh(Player& player)
 void Chara::GetGiveEffectPunchHigh(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack2SeHandle);
+	VoiceSe(m_attack2VoiceHandle);
 	m_giveDamage = 8.0f;
 	m_giveNoActFrame = kAllFramePunchHigh - kStartFramePunchHigh + 4;
 	m_giveGuardFrame = kAllFramePunchHigh - kStartFramePunchHigh - 2;
@@ -1159,12 +1159,12 @@ void Chara::GetAnimKickLight(Player& player)
 	//全体フレーム18
 	m_handle = m_kickLightHandle;//弱キック
 	m_animNum = 9;
-	m_oneAnimFrame = 2;
+	m_oneAnimIntervalFrame = 2;
 	m_startAttackFrame = kStartFrameKickLight;//攻撃発生
 	m_finishAttackFrame = 7;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1211,7 +1211,7 @@ void Chara::GetHitBoxKickLight(Player& player)
 void Chara::GetGiveEffectKickLight(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack1SeHandle);
+	VoiceSe(m_attack1VoiceHandle);
 	m_giveDamage = 3.0f;
 	m_giveNoActFrame = kAllFrameKickLight - kStartFrameKickLight + 2;
 	m_giveGuardFrame = kAllFrameKickLight - kStartFrameKickLight - 4;
@@ -1235,12 +1235,12 @@ void Chara::GetAnimKickHigh(Player& player)
 	//全体フレーム33
 	m_handle = m_kickHighHandle;//強キック
 	m_animNum = 11;
-	m_oneAnimFrame = 3;
+	m_oneAnimIntervalFrame = 3;
 	m_startAttackFrame = kStartFrameKickHigh;//攻撃発生
 	m_finishAttackFrame = 15;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1287,7 +1287,7 @@ void Chara::GetHitBoxKickHigh(Player& player)
 void Chara::GetGiveEffectKickHigh(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack3SeHandle);
+	VoiceSe(m_attack3VoiceHandle);
 	m_giveDamage = 9.0f;
 	m_giveNoActFrame = kAllFrameKickHigh - kStartFrameKickHigh + 9;
 	m_giveGuardFrame = kAllFrameKickHigh - kStartFrameKickHigh + 1;
@@ -1308,12 +1308,12 @@ void Chara::GetAnimPunchLightSquat(Player& player)
 	//全体フレーム8
 	m_handle = m_punchLightSquatHandle;//しゃがみ弱パンチ
 	m_animNum = 8;
-	m_oneAnimFrame = 1;
+	m_oneAnimIntervalFrame = 1;
 	m_startAttackFrame = kStartFramePunchLightSquat;//攻撃発生
 	m_finishAttackFrame = 5;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1360,7 +1360,7 @@ void Chara::GetHitBoxPunchLightSquat(Player& player)
 void Chara::GetGiveEffectPunchLightSquat(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack1SeHandle);
+	VoiceSe(m_attack1VoiceHandle);
 	m_giveDamage = 2.0f;
 	m_giveNoActFrame = kAllFramePunchLightSquat - kStartFramePunchLightSquat + 4;
 	m_giveGuardFrame = kAllFramePunchLightSquat - kStartFramePunchLightSquat - 1;
@@ -1381,12 +1381,12 @@ void Chara::GetAnimPunchHighSquat(Player& player)
 	//全体フレーム26
 	m_handle = m_punchHighSquatHandle;//しゃがみ弱パンチ
 	m_animNum = 13;
-	m_oneAnimFrame = 2;
+	m_oneAnimIntervalFrame = 2;
 	m_startAttackFrame = kStartFramePunchHighSquat;//攻撃発生
 	m_finishAttackFrame = 14;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1433,7 +1433,7 @@ void Chara::GetHitBoxPunchHighSquat(Player& player)
 void Chara::GetGiveEffectPunchHighSquat(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack1SeHandle);
+	VoiceSe(m_attack1VoiceHandle);
 	m_giveDamage = 8.0f;
 	m_giveNoActFrame = kAllFramePunchHighSquat - kStartFramePunchHighSquat + 1;
 	m_giveGuardFrame = kAllFramePunchHighSquat - kStartFramePunchHighSquat - 7;
@@ -1454,12 +1454,12 @@ void Chara::GetAnimKickLightSquat(Player& player)
 	//全体フレーム14
 	m_handle = m_kickLightSquatHandle;//しゃがみ弱パンチ
 	m_animNum = 7;
-	m_oneAnimFrame = 2;
+	m_oneAnimIntervalFrame = 2;
 	m_startAttackFrame = kStartFrameKickLightSquat;//攻撃発生
 	m_finishAttackFrame = 6;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1506,7 +1506,7 @@ void Chara::GetHitBoxKickLightSquat(Player& player)
 void Chara::GetGiveEffectKickLightSquat(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack1SeHandle);
+	VoiceSe(m_attack1VoiceHandle);
 	m_giveDamage = 2.0f;
 	m_giveNoActFrame = kAllFrameKickLightSquat - kStartFrameKickLightSquat + 3;
 	m_giveGuardFrame = kAllFrameKickLightSquat - kStartFrameKickLightSquat - 3;
@@ -1528,12 +1528,12 @@ void Chara::GetAnimKickHighSquat(Player& player)
 	//全体フレーム32
 	m_handle = m_kickHighSquatHandle;//しゃがみ強キック
 	m_animNum = 8;
-	m_oneAnimFrame = 4;
+	m_oneAnimIntervalFrame = 4;
 	m_startAttackFrame = kStartFrameKickHighSquat;//攻撃発生
 	m_finishAttackFrame = 11;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1580,7 +1580,7 @@ void Chara::GetHitBoxKickHighSquat(Player& player)
 void Chara::GetGiveEffectKickHighSquat(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack3SeHandle);
+	VoiceSe(m_attack3VoiceHandle);
 	m_giveDamage = 2.0f;
 	m_giveNoActFrame = kDown;
 	m_giveGuardFrame = kAllFrameKickHighSquat - kStartFrameKickHighSquat - 12;
@@ -1601,12 +1601,12 @@ void Chara::GetAnimPunchLightAerial(Player& player)
 	m_handle = m_punchLightAerialHandle;//空中弱パンチ
 	//全体フレーム16
 	m_animNum = 8;
-	m_oneAnimFrame = 1;
+	m_oneAnimIntervalFrame = 1;
 	m_startAttackFrame = 4;//攻撃発生
 	m_finishAttackFrame = 13;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1653,7 +1653,7 @@ void Chara::GetHitBoxPunchLightAerial(Player& player)
 void Chara::GetGiveEffectPunchLightAerial(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack1SeHandle);
+	VoiceSe(m_attack1VoiceHandle);
 	m_giveDamage = 3.0f;
 	m_giveNoActFrame = 13;
 	m_giveGuardFrame = 9;
@@ -1675,12 +1675,12 @@ void Chara::GetAnimPunchHighAerial(Player& player)
 	m_handle = m_punchHighAerialHandle;//空中弱パンチ
 	//全体フレーム16
 	m_animNum = 10;
-	m_oneAnimFrame = 2;
+	m_oneAnimIntervalFrame = 2;
 	m_startAttackFrame = 9;//攻撃発生
 	m_finishAttackFrame = 14;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1727,7 +1727,7 @@ void Chara::GetHitBoxPunchHighAerial(Player& player)
 void Chara::GetGiveEffectPunchHighAerial(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack2SeHandle);
+	VoiceSe(m_attack2VoiceHandle);
 	m_giveDamage = 8.0f;
 	m_giveNoActFrame = 19;
 	m_giveGuardFrame = 15;
@@ -1748,12 +1748,12 @@ void Chara::GetAnimKickLightAerial(Player& player)
 	m_handle = m_kickLightAerialHandle;//空中弱キック
 	//全体フレーム16
 	m_animNum = 10;
-	m_oneAnimFrame = 2;
+	m_oneAnimIntervalFrame = 2;
 	m_startAttackFrame = 5;//攻撃発生
 	m_finishAttackFrame = 6;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1802,7 +1802,7 @@ void Chara::GetHitBoxKickLightAerial(Player& player)
 void Chara::GetGiveEffectKickLightAerial(Player& player)
 {
 	//ボイス
-	VoiceSe(m_attack1SeHandle);
+	VoiceSe(m_attack1VoiceHandle);
 	m_giveDamage = 2.0f;
 	m_giveNoActFrame = 14;
 	m_giveGuardFrame = 10;
@@ -1824,12 +1824,12 @@ void Chara::GetAnimKickHighAerial(Player& player)
 	m_handle = m_kickHighAerialHandle;//空中弱キック
 	//全体フレーム16
 	m_animNum = 11;
-	m_oneAnimFrame = 2;
+	m_oneAnimIntervalFrame = 2;
 	m_startAttackFrame = 12;//攻撃発生
 	m_finishAttackFrame = 19;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -1880,7 +1880,7 @@ void Chara::GetGiveEffectKickHighAerial(Player& player)
 	if (player.GetHp() > 0.0f)
 	{
 		//ボイス
-		VoiceSe(m_attack3SeHandle);
+		VoiceSe(m_attack3VoiceHandle);
 	}
 	m_giveDamage = 8.0f;
 	m_giveNoActFrame = 19;
@@ -1945,10 +1945,10 @@ void Chara::GetAnimGuardStand(Player& player)
 {
 	m_handle = m_guardStandHandle;//ガード
 	m_animNum = 6;
-	m_oneAnimFrame =1;
+	m_oneAnimIntervalFrame =1;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 void Chara::GetHitBoxGuardStand(Player& player)
 {
@@ -1993,10 +1993,10 @@ void Chara::GetAnimGuardSquat(Player& player)
 {
 	m_handle = m_guardSquatHandle;//ガード
 	m_animNum = 8;
-	m_oneAnimFrame = 1;
+	m_oneAnimIntervalFrame = 1;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 void Chara::GetHitBoxGuardSquat(Player& player)
 {
@@ -2043,12 +2043,12 @@ void Chara::GetAnimGrasp(Player& player)
 	//全体フレーム30
 	m_handle = m_graspHandle;//ガード
 	m_animNum = 6;
-	m_oneAnimFrame = 5;
+	m_oneAnimIntervalFrame = 5;
 	m_startAttackFrame = 5;//攻撃発生
 	m_finishAttackFrame = 7;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -2139,9 +2139,9 @@ void Chara::GetAnimThrowFront(Player& player)
 {
 	m_handle = m_throwFrontHandle;
 	m_animNum = 12;
-	m_oneAnimFrame = 6;player.SetHandle(m_handle);
+	m_oneAnimIntervalFrame = 6;player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 void Chara::GetHitBoxThrowFront(Player& player)
 {
@@ -2182,10 +2182,10 @@ void Chara::GetAnimThrowBack(Player& player)
 {
 	m_handle = m_throwBackHandle;
 	m_animNum = 9;
-	m_oneAnimFrame = 6;
+	m_oneAnimIntervalFrame = 6;
 	player.SetHandle(m_handle);//昇竜拳
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 void Chara::GetHitBoxThrowBack(Player& player)
 {
@@ -2227,14 +2227,14 @@ void Chara::GetAnimHitStand(Player& player)
 	if (player.GetHp() > 0.0f)
 	{
 		//ボイス
-		VoiceSe(m_damage1SeHandle);
+		VoiceSe(m_damage1VoiceHandle);
 	}
 	m_handle = m_damageStandHandle;//やられ
 	m_animNum = 5;
-	m_oneAnimFrame = 5;
+	m_oneAnimIntervalFrame = 5;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 //空中やられ
 void Chara::GetAnimHitAerial(Player& player)
@@ -2242,14 +2242,14 @@ void Chara::GetAnimHitAerial(Player& player)
 	if (player.GetHp() > 0.0f)
 	{
 		//ボイス
-		VoiceSe(m_damage1SeHandle);
+		VoiceSe(m_damage1VoiceHandle);
 	}
 	m_handle = m_damageAerialHandle;//やられ
 	m_animNum = 7;
-	m_oneAnimFrame = 4;
+	m_oneAnimIntervalFrame = 4;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 //やられモーションの当たり判定(右向き)
 void Chara::GetHitBoxHitStand(Player& player)
@@ -2297,10 +2297,10 @@ void Chara::GetAnimDown(Player& player)
 {
 	m_handle = m_downHandle;
 	m_animNum = 13 ;
-	m_oneAnimFrame = 3;
+	m_oneAnimIntervalFrame = 3;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 void Chara::GetHitBoxDown(Player& player)
 {
@@ -2348,14 +2348,14 @@ void Chara::GetAnimDownAerial(Player& player)
 	if (player.GetHp() > 0.0f)
 	{
 		//ボイス
-		VoiceSe(m_damage2SeHandle);
+		VoiceSe(m_damage2VoiceHandle);
 	}
 	m_handle = m_downAerialHandle;
 	m_animNum = 8;
-	m_oneAnimFrame = 3;
+	m_oneAnimIntervalFrame = 3;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 void Chara::GetHitBoxDownAerial(Player& player)
 {
@@ -2406,20 +2406,20 @@ void Chara::GetAnimStandUp(Player& player)
 		if (GetRand(1) != 0)
 		{
 			//ボイス
-			VoiceSe(m_standUp1SeHandle);
+			VoiceSe(m_standUp1VoiceHandle);
 		}
 		else
 		{
 			//ボイス
-			VoiceSe(m_standUp2SeHandle);
+			VoiceSe(m_standUp2VoiceHandle);
 		}
 	}
 	m_handle = m_standUpHandle;
 	m_animNum = 5;
-	m_oneAnimFrame = 3;
+	m_oneAnimIntervalFrame = 3;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 ;
 //勝利ポーズ
@@ -2427,10 +2427,10 @@ void Chara::GetAnimWinPose(Player& player)
 {
 	m_handle = m_winPoseHandle;
 	m_animNum = 5;
-	m_oneAnimFrame = 5;
+	m_oneAnimIntervalFrame = 5;
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 }
 
 
@@ -2448,11 +2448,11 @@ void Chara::GetAnimCommand1(Player& player)
 	m_handle = m_commandHandle1;//波動拳
 	//全体フレーム47
 	m_animNum = 7;
-	m_oneAnimFrame = 3;
+	m_oneAnimIntervalFrame = 3;
 	//攻撃発生
 	if (player.GetAttackAttackTypes() == AttackTypes::HighPunch)
 	{
-		m_oneAnimFrame = 2;
+		m_oneAnimIntervalFrame = 2;
 		//強は発生12フレーム
 		m_startAttackFrame = kStartFrameCommand1High;
 	}
@@ -2464,7 +2464,7 @@ void Chara::GetAnimCommand1(Player& player)
 	m_finishAttackFrame = 47;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -2565,7 +2565,7 @@ void Chara::GetAnimCommand2(Player& player)
 	{
 		//全体フレーム60
 		m_animNum = 4;
-		m_oneAnimFrame = 3;
+		m_oneAnimIntervalFrame = 3;
 		m_startAttackFrame = kStartFrameCommand2 + 2;
 		m_finishAttackFrame = 14 + 2;
 	}
@@ -2574,14 +2574,14 @@ void Chara::GetAnimCommand2(Player& player)
 	{
 		//全体フレーム47
 		m_animNum = 4;
-		m_oneAnimFrame = 2;
+		m_oneAnimIntervalFrame = 2;
 		m_startAttackFrame = kStartFrameCommand2;//攻撃発生
 		m_finishAttackFrame = 14;//持続終了
 	}
 	m_handle = m_commandHandle2;//昇竜拳
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -2694,15 +2694,15 @@ void Chara::MovementCommand2(Player& player, Bullet& bullet, Player& enemy)
 
 void Chara::GetAnimCommand3(Player& player)
 {
-	if (player.GetIsThrowSuccess())
+	if (player.IsThrowSuccess())
 	{
 		m_handle = m_commandHandle3;//スクリュー
 		//全体フレーム120
 		m_animNum = 8;
-		m_oneAnimFrame = 15;
+		m_oneAnimIntervalFrame = 15;
 		player.SetHandle(m_handle);
 		player.SetAnimNum(m_animNum);
-		player.SetOneAnimFrame(m_oneAnimFrame);
+		player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	}
 	else
 	{
@@ -2798,7 +2798,7 @@ void Chara::MovementCommand3(Player& player, Bullet& bullet, Player& enemy)
 {
 	GetAnimCommand3(player);
 	//投げが当たったら
-	if (player.GetIsThrowSuccess())
+	if (player.IsThrowSuccess())
 	{
 		//投げモーション
 		GetAnimCommand3(player);
@@ -2814,7 +2814,7 @@ void Chara::MovementCommand3(Player& player, Bullet& bullet, Player& enemy)
 		else
 		{
 			//落下中もプレイヤーと同じ座標
-			if (!player.GetIsGround())
+			if (!player.IsGround())
 			{
 				enemy.SetPos(player.GetPos());
 			}
@@ -2862,7 +2862,7 @@ void Chara::GetAnimCommand4(Player& player)
 	{
 		//全体フレーム49
 		m_animNum = 7;
-		m_oneAnimFrame = 7;
+		m_oneAnimIntervalFrame = 7;
 		m_startAttackFrame = kStartFrameCommand4High;//攻撃発生
 		m_finishAttackFrame = 30;//持続終了
 	}
@@ -2871,14 +2871,14 @@ void Chara::GetAnimCommand4(Player& player)
 	{
 		//全体フレーム42
 		m_animNum = 7;
-		m_oneAnimFrame = 6;
+		m_oneAnimIntervalFrame = 6;
 		m_startAttackFrame = kStartFrameCommand4Light;//攻撃発生
 		m_finishAttackFrame = 21;//持続終了
 	}
 	m_handle = m_commandHandle4;//スパイラルアロー
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -2998,11 +2998,11 @@ void Chara::GetAnimCommand5(Player& player)
 	m_handle = m_commandHandle5;//ソニックブーム
 	//全体フレーム40
 	m_animNum = 7;
-	m_oneAnimFrame = 6;
+	m_oneAnimIntervalFrame = 6;
 	//攻撃発生
 	if (player.GetAttackAttackTypes() == AttackTypes::HighPunch)
 	{
-		m_oneAnimFrame = 5;
+		m_oneAnimIntervalFrame = 5;
 		//強は発生12フレーム
 		m_startAttackFrame = 10;
 	}
@@ -3014,7 +3014,7 @@ void Chara::GetAnimCommand5(Player& player)
 	m_finishAttackFrame = 40;//持続終了
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -3113,11 +3113,11 @@ void Chara::GetAnimCommand6(Player& player)
 	m_handle = m_commandHandle6;
 	//全体フレーム45
 	m_animNum = 10;
-	m_oneAnimFrame = 4;
+	m_oneAnimIntervalFrame = 4;
 	//攻撃発生
 	if (player.GetAttackAttackTypes() == AttackTypes::HighKick)
 	{
-		m_oneAnimFrame = 3;
+		m_oneAnimIntervalFrame = 3;
 		//強は発生16フレーム
 		m_startAttackFrame = kStartFrameCommand6High;
 		m_finishAttackFrame = kAllFrameCommand6High;//持続終了 52F
@@ -3130,7 +3130,7 @@ void Chara::GetAnimCommand6(Player& player)
 	}
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -3228,13 +3228,13 @@ void Chara::GetAnimCommand7(Player& player)
 {
 	//全体フレーム48
 	m_animNum = 6;
-	m_oneAnimFrame = 4;
+	m_oneAnimIntervalFrame = 4;
 	m_startAttackFrame = kStartFrameCommand7;//攻撃発生
 	m_finishAttackFrame = 27;//持続終了
 	m_handle = m_commandHandle7;//バーチカルローリング
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -3346,13 +3346,13 @@ void Chara::MovementCommand7(Player& player, Bullet& bullet, Player& enemy)
 void Chara::GetAnimCommand8(Player& player)
 {
 	m_animNum = 7;
-	m_oneAnimFrame = 5;
+	m_oneAnimIntervalFrame = 5;
 	m_startAttackFrame = 4;//攻撃発生
 	m_finishAttackFrame = 5;//持続終了
 	m_handle = m_commandHandle8;//竜巻旋風脚
 	player.SetHandle(m_handle);
 	player.SetAnimNum(m_animNum);
-	player.SetOneAnimFrame(m_oneAnimFrame);
+	player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 	player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 }
@@ -3487,15 +3487,15 @@ void Chara::MovementCommand8(Player& player, Bullet& bullet, Player& enemy)
 
 void Chara::GetAnimCommand9(Player& player)
 {
-	if (player.GetIsThrowSuccess())
+	if (player.IsThrowSuccess())
 	{
 		m_handle = m_commandHandle3;//スクリュー
 		//全体フレーム40
 		m_animNum = 8;
-		m_oneAnimFrame = 5;
+		m_oneAnimIntervalFrame = 5;
 		player.SetHandle(m_handle);
 		player.SetAnimNum(m_animNum);
-		player.SetOneAnimFrame(m_oneAnimFrame);
+		player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 	}
 	else
 	{
@@ -3504,19 +3504,19 @@ void Chara::GetAnimCommand9(Player& player)
 		
 		if (player.GetAttackAttackTypes() == AttackTypes::HighPunch)
 		{
-			m_oneAnimFrame = 7;
+			m_oneAnimIntervalFrame = 7;
 			m_startAttackFrame = 43;//攻撃発生
 			m_finishAttackFrame = 45;//持続終了
 		}
 		else if (player.GetAttackAttackTypes() == AttackTypes::LightPunch)
 		{	
-			m_oneAnimFrame = 6;
+			m_oneAnimIntervalFrame = 6;
 			m_startAttackFrame = 34;//攻撃発生
 			m_finishAttackFrame = 36;//持続終了
 		}
 		player.SetHandle(m_handle);//昇竜拳
 		player.SetAnimNum(m_animNum);
-		player.SetOneAnimFrame(m_oneAnimFrame);
+		player.SetOneAnimFrame(m_oneAnimIntervalFrame);
 		player.SetStartAttackFrame(m_startAttackFrame);//攻撃発生
 		player.SetFinishAttackFrame(m_finishAttackFrame);//持続終了
 	}
@@ -3601,14 +3601,14 @@ void Chara::MovementCommand9(Player& player, Bullet& bullet, Player& enemy)
 	GetAnimCommand9(player);
 	if (player.GetAnimCountFrame() > 0)
 	{
-		if (player.GetIsGround())
+		if (player.IsGround())
 		{
 			m_velocity.x = 0;
 			m_velocity.y = 0;
 		}
 	}
 	//投げが当たったら
-	if (player.GetIsThrowSuccess())
+	if (player.IsThrowSuccess())
 	{
 		m_velocity.x = 0;
 		m_velocity.y = 0;

@@ -18,7 +18,7 @@ FadeManager::~FadeManager()
 {
 }
 
-void FadeManager::BlackFadeDraw(bool isFadeIn)
+void FadeManager::DrawBlackFade(bool isFadeIn)
 {
 	//フェードイン
 	if (isFadeIn)
@@ -59,7 +59,7 @@ void FadeManager::BlackFadeDraw(bool isFadeIn)
 	}
 }
 
-void FadeManager::WhiteFadeDraw(bool isFadeIn)
+void FadeManager::DrawWhiteFade(bool isFadeIn)
 {
 	//フェードイン
 	if (isFadeIn)

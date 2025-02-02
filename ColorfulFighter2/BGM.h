@@ -7,8 +7,6 @@ private:
 	int m_bgmHandle;
 	//ˆê“x‚¾‚¯ŒÄ‚Î‚ê‚½‚¢‚Ì‚ÅboolŒ^‚Åˆê“xŒÄ‚Î‚ê‚½‚çtrue‚É‚µ‚ÄŒÄ‚×‚È‚­‚·‚é
 	bool m_isPlay;
-
-
 	//‹È
 	int m_bgmStage1;
 	int m_bgmResult;
@@ -17,7 +15,6 @@ private:
 public:
 	BGM();
 	~BGM();
-
 	void SetBGM(int bgmIndex);
 	void PlayOnce();//Ä¶
 	void PlayLoop();//LoopÄ¶

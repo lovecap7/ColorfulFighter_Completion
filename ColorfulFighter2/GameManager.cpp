@@ -237,18 +237,18 @@ void GameManager::NoStopUpdate(Player& p1, Player& p2)
 
 void GameManager::Draw(Camera& camera)
 {
-	FadeDraw();//フェード
+	DrawFade();//フェード
 	//ヒットエフェクト
-	HitEffectDraw(camera);
+	DrawHitEffect(camera);
 }
 
-void GameManager::FadeDraw()
+void GameManager::DrawFade()
 {
 	//フェードインアウト
-	m_fadeManager->BlackFadeDraw(m_isFadeIn);
+	m_fadeManager->DrawBlackFade(m_isFadeIn);
 }
 
-void GameManager::HitEffectDraw(Camera& camera)
+void GameManager::DrawHitEffect(Camera& camera)
 {
 	//描画
 	//P1

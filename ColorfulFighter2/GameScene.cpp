@@ -74,6 +74,23 @@ void GameScene::CreateColorHandle()
 	}
 }
 
+
+void GameScene::UpdateStageColor()
+{
+	//色を変えていく
+	m_colorAlphaCountFrame += kColorChangeSpeed;
+	if (m_colorAlphaCountFrame > 255)
+	{
+		m_colorIndex++;
+		m_colorAlphaCountFrame = 0;
+	}
+	if (m_colorIndex >= kColorNum)
+	{
+		m_colorIndex = 0;
+	}
+}
+
+
 void GameScene::GameInit()
 {
 	m_player1->Init((kStageWidth / 2) - kPlayerFirstPosX, false);
@@ -84,7 +101,7 @@ void GameScene::GameInit()
 	m_ui->Init(m_player1->GetHp(), m_player2->GetHp(),*m_gameManager);
 	m_camera->Init(*m_player1, *m_player2);
 }
-void GameScene::StageDraw()
+void GameScene::DrawStage()
 {
 	DxLib::DrawGraph(kStageBackPosX + static_cast<int>(m_camera->m_drawOffset.x),
 		kStageBackPosY + static_cast<int>(m_camera->m_drawOffset.y), 
@@ -94,7 +111,7 @@ void GameScene::StageDraw()
 		m_floorBaseHandle, true);
 	//色
 	//色が強いから少し透明にしてる
-	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - m_colorCountFrame);
+	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 - m_colorAlphaCountFrame);
 	//壁
 	DxLib::DrawGraph(kStageBackPosX + static_cast<int>(m_camera->m_drawOffset.x),
 		kStageBackPosY + static_cast<int>(m_camera->m_drawOffset.y), 
@@ -104,7 +121,8 @@ void GameScene::StageDraw()
 		kStageFloorPosY + static_cast<int>(m_camera->m_drawOffset.y), 
 		m_floorColorHandle[m_colorIndex], true);
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_colorCountFrame);
+	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_colorAlphaCountFrame);
+	//次の色を表示
 	int nextColorIndex = m_colorIndex + 1;
 	if (nextColorIndex >= kColorNum)
 	{
@@ -124,7 +142,7 @@ void GameScene::StageDraw()
 GameScene::GameScene(SceneController& controller):
 	SceneBase(controller),
 	m_color(0x000000),
-	m_colorCountFrame(0),
+	m_colorAlphaCountFrame(0),
 	m_colorIndex(0),
 	m_backColorHandle{},
 	m_floorColorHandle{}
@@ -145,23 +163,19 @@ GameScene::GameScene(SceneController& controller):
 	//弾
 	m_bullet1 = std::make_shared<Bullet>(PlayerIndex::Player1);
 	m_bullet2 = std::make_shared<Bullet>(PlayerIndex::Player2);
-
 	//ステージ
 	m_floorBaseHandle = LoadGraph("./img/stage/floor/NewBase.png");//床
 	m_backBaseHandle = LoadGraph("./img/stage/back/NewBase.png");;//背景
 	//8色に光らせる準備
 	CreateColorHandle();
-	
 	//カメラ
 	m_camera = std::make_shared<Camera>();
-
 	//BGM
 	m_bgm = std::make_shared<BGM>();
 	int bgmhandle = LoadSoundMem("./BGM/BGM_Stage2.mp3");
 	m_bgm->SetBGM(bgmhandle);
 	m_bgm->Volume(kBgmVolume);
 	m_bgm->PlayLoop();
-
 	//初期化
 	GameInit();
 }
@@ -187,7 +201,7 @@ void GameScene::Update(Input& input, Input& input2)
 	m_camera->Update(*m_player1, *m_player2, *m_gameManager);
 	//戦闘前はUpdateを止める
 	//ヒットストップ中はUpdateを止める
-	if (!m_gameManager->GetIsHitStop() && m_gameManager->GetIsStartRound())
+	if (!m_gameManager->IsHitStop() && m_gameManager->IsStartRound())
 	{
 		m_player1->Update(input, m_player2, m_bullet1, *m_gameManager);
 		m_player2->Update(input2, m_player1, m_bullet2, *m_gameManager);
@@ -200,7 +214,7 @@ void GameScene::Update(Input& input, Input& input2)
 	m_ui->Update(m_player1->GetHp(), m_player2->GetHp(), *m_gameManager);
 
 	//2本取ったらゲーム終了
-	if (m_gameManager->GetIsGameset())
+	if (m_gameManager->IsGameset())
 	{
 		////BGMを止める
 		//soundManager.StopBGM();
@@ -211,30 +225,20 @@ void GameScene::Update(Input& input, Input& input2)
 		return;//忘れずreturn
 	}
 	//ラウンドの切り替わり
-	if (m_gameManager->GetIsChangeRound())
+	if (m_gameManager->IsChangeRound())
 	{
 		//リセット
 		GameInit();
 		m_gameManager->OffIsChangeRound();
 	}
 
-	//色を変えていく
-	m_colorCountFrame += kColorChangeSpeed;
-	if (m_colorCountFrame > 255)
-	{
-		m_colorIndex++;
-		m_colorCountFrame = 0;
-	}
-	if (m_colorIndex >= kColorNum)
-	{
-		m_colorIndex = 0;
-	}
+	UpdateStageColor();
 }
 
 void GameScene::Draw()
 {
 	//ステージ
-	StageDraw();
+	DrawStage();
 	m_ui->DrawBack();
 	//攻撃したほうを前に描画
 	if (m_gameManager->GetIsDrawFrontP1())

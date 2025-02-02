@@ -109,7 +109,7 @@ Player::Player(PlayerIndex playerIndex, int* selectCommandIndex,CharaColorIndex 
 	m_animIndex(0),
 	m_animNum(0),
 	m_hitBoxGrasp(),
-	m_oneAnimFrame(0),
+	m_oneAnimIntervalFrame(0),
 	m_startAttackFrame(0),
 	m_finishAttackFrame(0),
 	m_noActFrame(0),
@@ -190,7 +190,7 @@ void Player::Init(float X,bool isLeft)
 	m_animCountFrame = 0;
 	m_animIndex = 0;
 	m_animNum = 0;
-	m_oneAnimFrame = 0;
+	m_oneAnimIntervalFrame = 0;
 	//攻撃のステータスの初期化
 	m_startAttackFrame = 0;
 	m_finishAttackFrame = 0;
@@ -432,7 +432,7 @@ void Player::LookDir(Player& enemy)
 	}
 }
 
-bool Player::HitCheck(std::shared_ptr<Player> enemy)
+bool Player::CheckHit(std::shared_ptr<Player> enemy)
 {
 	//攻撃の判定がないなら当たらない
 	if (m_hitBoxAttack.x1 == 0 &&
@@ -580,7 +580,7 @@ bool Player::HitCheck(std::shared_ptr<Player> enemy)
 	return false;
 }
 
-bool Player::HitGraspCheck(std::shared_ptr<Player> enemy)
+bool Player::CheckHitGrasp(std::shared_ptr<Player> enemy)
 {
 	//攻撃の判定がないなら当たらない
 	if (m_hitBoxGrasp.x1 == 0 &&
@@ -642,6 +642,7 @@ bool Player::HitGraspCheck(std::shared_ptr<Player> enemy)
 	return false;
 }
 
+#if _DEBUG
 //当たり判定を可視化
 void Player::DrawHitBox(const Camera& camera)
 {
@@ -686,7 +687,7 @@ void Player::DrawHitBox(const Camera& camera)
 			(static_cast<int>(m_pos.x) + m_hitBoxThrow.x2) + camera.m_drawOffset.x,
 			(static_cast<int>(m_pos.y) + m_hitBoxThrow.y2) + camera.m_drawOffset.y,
 			0xffffff, true);
-		if (isCheckAttackBox)
+		if (m_isCheckAttackBox)
 		{
 			//攻撃判定
 			DxLib::DrawBox(
@@ -742,7 +743,7 @@ void Player::DrawHitBox(const Camera& camera)
 			(static_cast<int>(m_pos.x) - m_hitBoxThrow.x2) + camera.m_drawOffset.x,
 			(static_cast<int>(m_pos.y) + m_hitBoxThrow.y2) + camera.m_drawOffset.y,
 			0xffffff, true);
-		if (isCheckAttackBox)
+		if (m_isCheckAttackBox)
 		{
 			//攻撃判定
 			DxLib::DrawBox(
@@ -763,11 +764,8 @@ void Player::DrawHitBox(const Camera& camera)
 		
 	}
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 150);
-
-
-
-
 }
+#endif
 
 //立ちくらい
 void Player::LoadStateHit()
@@ -1266,7 +1264,7 @@ void Player::IdleStandUpdate(Input& input, std::shared_ptr<Player>& enemy, std::
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -1469,7 +1467,7 @@ void Player::IdleSquatUpdate(Input& input, std::shared_ptr<Player>& enemy, std::
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -1626,7 +1624,7 @@ void Player::JumpUpdate(Input& input, std::shared_ptr<Player>& enemy, std::share
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -1733,7 +1731,7 @@ void Player::AttackStandUpdate(Input& input, std::shared_ptr<Player>& enemy, std
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -1767,14 +1765,17 @@ void Player::AttackStandUpdate(Input& input, std::shared_ptr<Player>& enemy, std
 	
 	//キャンセル
 	Cancel(input, enemy, myBullet, gameManager);
-
-	isCheckAttackBox = false;
+#if _DEBUG
+	m_isCheckAttackBox = false;
+#endif
 	//フレームが攻撃持続フレーム以内の時
 	if (m_startAttackFrame <= m_animCountFrame && m_animCountFrame <= m_finishAttackFrame)
 	{
-		isCheckAttackBox = true;
+#if _DEBUG
+		m_isCheckAttackBox = true;
+#endif
 		//攻撃が当たったかどうか
-		m_isHitAttack = HitCheck(enemy);
+		m_isHitAttack = CheckHit(enemy);
 		if (m_isHitAttack)
 		{
 			//ヒットストップ
@@ -1879,7 +1880,7 @@ void Player::AttackSquatUpdate(Input& input, std::shared_ptr<Player>& enemy, std
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -1915,13 +1916,17 @@ void Player::AttackSquatUpdate(Input& input, std::shared_ptr<Player>& enemy, std
 	//キャンセル
 	Cancel(input, enemy, myBullet, gameManager);
 
-	isCheckAttackBox = false;
+#if _DEBUG
+	m_isCheckAttackBox = false;
+#endif
 	//フレームが攻撃持続フレーム以内の時
 	if (m_startAttackFrame <= m_animCountFrame && m_animCountFrame <= m_finishAttackFrame)
 	{
-		isCheckAttackBox = true;
+#if _DEBUG
+		m_isCheckAttackBox = true;
+#endif
 		//攻撃が当たったかどうか
-		m_isHitAttack = HitCheck(enemy);
+		m_isHitAttack = CheckHit(enemy);
 		if (m_isHitAttack)
 		{
 			//ヒットストップ
@@ -2025,7 +2030,7 @@ void Player::AttackAerialUpdate(Input& input, std::shared_ptr<Player>& enemy, st
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -2041,16 +2046,19 @@ void Player::AttackAerialUpdate(Input& input, std::shared_ptr<Player>& enemy, st
 			return;
 		}
 	}
-	
 
-	isCheckAttackBox = false;
+#if _DEBUG
+	m_isCheckAttackBox = false;
+#endif
 	//フレームが攻撃持続フレーム以内の時
 	if (m_startAttackFrame <= m_animCountFrame && m_animCountFrame <= m_finishAttackFrame)
 	{
 		m_animIndex = m_animNum/2;
-		isCheckAttackBox = true;
+#if _DEBUG
+		m_isCheckAttackBox = true;
+#endif
 		//攻撃が当たったかどうか
-		m_isHitAttack = HitCheck(enemy);
+		m_isHitAttack = CheckHit(enemy);
 		if (m_isHitAttack)
 		{
 			//ヒットストップ
@@ -2162,7 +2170,7 @@ void Player::CommandUpdate(Input& input, std::shared_ptr<Player>& enemy, std::sh
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 	}
@@ -2228,9 +2236,11 @@ void Player::CommandUpdate(Input& input, std::shared_ptr<Player>& enemy, std::sh
 	//フレームが攻撃持続フレーム以内の時
 	if (m_startAttackFrame <= m_animCountFrame && m_animCountFrame <= m_finishAttackFrame)
 	{
-		isCheckAttackBox = true;
+#if _DEBUG
+		m_isCheckAttackBox = true;
+#endif
 		//攻撃が当たったかどうか
-		m_isHitAttack = HitCheck(enemy);
+		m_isHitAttack = CheckHit(enemy);
 		if (m_isHitAttack)
 		{
 			//ヒットストップ
@@ -2240,7 +2250,7 @@ void Player::CommandUpdate(Input& input, std::shared_ptr<Player>& enemy, std::sh
 		}
 
 		//投げが当たったかどうか
-		m_isHitGrasp = HitGraspCheck(enemy);
+		m_isHitGrasp = CheckHitGrasp(enemy);
 		if (m_isHitGrasp)
 		{
 			//アニメーションをリセット
@@ -2312,7 +2322,7 @@ void Player::GuardStandUpdate(Input& input, std::shared_ptr<Player>& enemy, std:
 	int animMaxNum = m_animNum - 1;
 
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -2368,7 +2378,7 @@ void Player::GuardSquatUpdate(Input& input, std::shared_ptr<Player>& enemy, std:
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -2414,7 +2424,7 @@ void Player::GraspUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shar
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -2448,13 +2458,17 @@ void Player::GraspUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shar
 	
 
 
-	isCheckAttackBox = false;
+#if _DEBUG
+	m_isCheckAttackBox = false;
+#endif
 	//フレームが攻撃持続フレーム以内の時
 	if (m_startAttackFrame <= m_animCountFrame && m_animCountFrame <= m_finishAttackFrame)
 	{
-		isCheckAttackBox = true;
+#if _DEBUG
+		m_isCheckAttackBox = true;
+#endif
 		//攻撃が当たったかどうか
-		m_isHitGrasp = HitGraspCheck(enemy);
+		m_isHitGrasp = CheckHitGrasp(enemy);
 		//ゲームマネージャーの中で投げが通ったかをチェックして
 		//成功している場合　m_isThrowSuccess　がtrueになる
 	}
@@ -2561,7 +2575,7 @@ void Player::ThrowUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shar
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 
@@ -2638,7 +2652,7 @@ void Player::BeThrownUpdate(Input& input, std::shared_ptr<Player>& enemy, std::s
 	m_isGuard = false;
 
 	//コマ投げは投げ抜けできない
-	if (!enemy->GetIsCommand())
+	if (!enemy->IsCommand())
 	{
 		if (m_animCountFrame <= kCanThrowEscapeFrame)
 		{
@@ -2711,7 +2725,7 @@ void Player::BeThrownUpdate(Input& input, std::shared_ptr<Player>& enemy, std::s
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -2780,7 +2794,7 @@ void Player::ThrowEscapeUpdate(Input& input, std::shared_ptr<Player>& enemy, std
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -2852,7 +2866,7 @@ void Player::DamageUpdate(Input& input, std::shared_ptr<Player>& enemy, std::sha
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -2935,7 +2949,7 @@ void Player::DownUpdate(Input& input, std::shared_ptr<Player>& enemy, std::share
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -2989,7 +3003,7 @@ void Player::DownAerialUpdate(Input& input, std::shared_ptr<Player>& enemy, std:
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -3027,7 +3041,7 @@ void Player::StandUpUpdate(Input& input, std::shared_ptr<Player>& enemy, std::sh
 	//アニメーションの最大数から-1した値が最後のアニメーション
 	int animMaxNum = m_animNum - 1;
 	//アニメーションのフレームを数える
-	if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+	if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 	{
 		m_animIndex++;
 		//アニメーションの数が最大まで行ったとき
@@ -3078,7 +3092,7 @@ void Player::ResultUpdate(Input& input, std::shared_ptr<Player>& enemy, std::sha
 {
 	//判定を消す
 	ResetAttackBox();
-	ResetIsHitGrasp();
+	OffIsHitGrasp();
 	m_chara->GetHitBoxDown(*this);
 
 	m_velocity.x = 0;
@@ -3100,7 +3114,7 @@ void Player::ResultUpdate(Input& input, std::shared_ptr<Player>& enemy, std::sha
 		m_chara->GetAnimWinPose(*this);
 
 		//アニメーションのフレームを数える
-		if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+		if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 		{
 			m_animIndex++;
 			//アニメーションの数が最大まで行ったとき
@@ -3116,7 +3130,7 @@ void Player::ResultUpdate(Input& input, std::shared_ptr<Player>& enemy, std::sha
 		m_chara->GetAnimIdleStand(*this);
 
 		//アニメーションのフレームを数える
-		if (m_animCountFrame % m_oneAnimFrame == 0 && m_animCountFrame != 0)
+		if (m_animCountFrame % m_oneAnimIntervalFrame == 0 && m_animCountFrame != 0)
 		{
 			m_animIndex++;
 			//アニメーションの数が最大まで行ったとき

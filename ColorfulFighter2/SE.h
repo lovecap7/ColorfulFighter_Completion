@@ -9,7 +9,6 @@ private:
 public:
 	SE();
 	~SE();
-
 	void SetSE(int seIndex);
 	void PlayOnce();//Ä¶
 	void PlayLoop();//LoopÄ¶

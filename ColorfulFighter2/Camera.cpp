@@ -87,7 +87,7 @@ void Camera::ShakeCamera(Player& p1, Player& p2, GameManager& gameManager)
 		//ˆê“x‚¾‚¯‰Šú‰»‚·‚é
 		if (!m_isInitShakeVelo)
 		{
-			if (!gameManager.GetIsTimeUpOrKo())
+			if (!gameManager.IsTimeUpOrKo())
 			{
 				//c—h‚ê‚¾‚¯
 				m_shakeVelo.x = 0;

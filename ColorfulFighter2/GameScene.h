@@ -23,7 +23,6 @@ private:
     std::shared_ptr<Bullet> m_bullet2;
     //サウンド
     std::shared_ptr<BGM> m_bgm;
-   
     //ステージの画像
     int m_floorBaseHandle;//床
     int m_backBaseHandle;//背景
@@ -31,19 +30,16 @@ private:
     int m_floorColorHandle[8];//床の色
     int m_backColorHandle[8];//背景の色
     void CreateColorHandle();
-
     //ゲームの初期化
     void GameInit();
-
     //ステージ
-    void StageDraw();
+    void DrawStage();
+    void UpdateStageColor();
     unsigned int m_color;
-    int m_colorCountFrame;
+    int m_colorAlphaCountFrame;
     int m_colorIndex;
-
 public:
     GameScene(SceneController& controller);
-
     /// <summary>
     /// 派生クラスで実装を実装
     /// </summary>

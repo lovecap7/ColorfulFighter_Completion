@@ -13,8 +13,6 @@ class CollisionCheck
 private:
 	Vector3 m_lastVeloP1;
 	Vector3 m_lastVeloP2;
-	int m_frameCount;
-	
 	//壁に当たった時の処理
 	Vector3 WallProcess(Player& player, Camera& camera);
 	//プレイヤーとぶつかっているか
@@ -31,17 +29,14 @@ private:
 		Camera& camera,GameManager& gameManager);//攻撃の処理
 	//攻撃が通るかをチェック
 	bool CheckSuccessAttack(Player& attacker, Player& defender);
-	
 	//ヒットエフェクトの出すポジションを計算
 	Vector3 CreateHitEffectPosPtoP(Player& p1, Player& p2);
 	Vector3 CreateHitEffectPosBtoP(Bullet& p1, Player& p2);
-
 	//SE
 	std::shared_ptr<SE> m_seP1;
 	std::shared_ptr<SE> m_seP2;
 	int m_hitSeHandle;
 	int m_guardSeHandle;
-
 public:
 	CollisionCheck();
 	~CollisionCheck();

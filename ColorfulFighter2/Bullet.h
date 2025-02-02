@@ -18,21 +18,18 @@ private:
 	//UŒ‚‚É‚æ‚Á‚Ä‘Šè‚É—^‚¦‚éVelo
 	Vector3 m_giveAttackVelo;
 	void SetShotEffect(float damage, int giveNoActFrame, int giveGuardFrame);
-
 	//true‚È‚ç”­Ë’†
 	bool m_isShooting;
 	//UŒ‚‚ªƒvƒŒƒCƒ„[‚É‚ ‚Á‚½‚©‚ğ”»’è
 	bool m_isHitPlayer;
-
 	//ƒvƒŒƒCƒ„[‚É“–‚½‚Á‚½‚©
-	bool HitCheckPlayer(Player& enemy);
+	bool CheckHitPlayer(Player& enemy);
 	//’e‚É“–‚½‚Á‚½‚©
-	bool HitCheckBullet(Bullet& otherBullet);
+	bool CheckHitBullet(Bullet& otherBullet);
 	//UŒ‚”»’è‚Ì‰Šú‰»
 	void InitHitBoxHadou();
 	void InitHitBoxSonic();
 	void InitHitBoxWave();
-
 	void ResetAttackBox() {
 		//UŒ‚‚Ì”»’è‚ğƒŠƒZƒbƒg
 		m_hitBoxAttack.x1 = 0;
@@ -40,30 +37,25 @@ private:
 		m_hitBoxAttack.x2 = 0;
 		m_hitBoxAttack.y2 = 0;
 	}
-
 	//’e‚Ìƒnƒ“ƒhƒ‹
 	int m_blueBulletHandle;//Â‚¢’e
 	int m_yellowBulletHandle;//‰©F‚¢’e
 	int m_purpleBulletHandle;//‡‚Ì’e
-	
 	int m_animIndex;//Œ»İ‚Ì‰æ‘œ‚Ì”Ô†
 	int m_startAnimIndex;//Å‰‚Ì‰æ‘œ‚Ì”Ô†
 	int m_finishAnimIndex;//ÅŒã‚Ì‰æ‘œ‚Ì”Ô†
 	int m_animCountFrame;
-
 	using UpdateFunc_t = void(Bullet::*)(Player& enemy, Bullet& otherBullet, Camera& camera);
 	UpdateFunc_t m_update;
 	//Draw
 	using DrawFunc_t = void(Bullet::*)(Camera& camera);
 	DrawFunc_t m_draw;
-
-	void HadouUpdate(Player& enemy, Bullet& otherBullet, Camera& camera);
-	void HadouDraw(Camera& camera);
-	void SonicUpdate(Player& enemy, Bullet& otherBullet, Camera& camera);
-	void SonicDraw(Camera& camera);
-	void WaveUpdate(Player& enemy, Bullet& otherBullet, Camera& camera);
-	void WaveDraw(Camera& camera);
-
+	void UpdateHadou(Player& enemy, Bullet& otherBullet, Camera& camera);
+	void DrawHadou(Camera& camera);
+	void UpdateSonic(Player& enemy, Bullet& otherBullet, Camera& camera);
+	void DrawSonic(Camera& camera);
+	void UpdateWave(Player& enemy, Bullet& otherBullet, Camera& camera);
+	void DrawWave(Camera& camera);
 public:
 	Bullet(PlayerIndex playerIndex);
 	~Bullet();
@@ -71,31 +63,25 @@ public:
 	void Update(Player& enemy, Bullet& otherBullet,Camera& camera);
 	void Draw(Camera& camera);
 	void Disappear();//’e‚ªÁ‚¦‚é
-
 	//‚È‚ñP‚È‚Ì‚©
 	PlayerIndex GetPlayerIndex() { return m_playerIndex; }
-	
 	//Œ»İ”­Ë’†‚©‚ğæ“¾
 	bool GetIsShooting()const { return m_isShooting; }
 	//”­Ë’†
 	void OnIsShooting() { m_isShooting = true; }
 	void OffShooting() { m_isShooting = false; }
-
 	//À•W‚Ìæ“¾
 	Vector3 GetPos()const { return m_pos; }
-
 	//ƒvƒŒƒCƒ„[‚É“–‚½‚Á‚½‚©‚Ç‚¤‚©‚ğæ“¾
 	bool GetIsHitPlayer() const{ return m_isHitPlayer; }
 	//UŒ‚”»’è
 	Box GetHitBoxAttack()const { return m_hitBoxAttack; }
-	
 	//ƒ_ƒ[ƒW
 	float GetGiveDamage()const { return m_giveDamage; }
 	//d’¼
 	int GetGiveNoActFrame()const { return m_giveNoActFrame; }
 	//ƒK[ƒhd’¼
 	int GetGiveGuardFrame()const { return m_giveGuardFrame; }
-
 	//UŒ‚‚É‚æ‚Á‚Ä‘Šè‚É—^‚¦‚éVelo
 	Vector3 GetGiveAttackVelo() { return m_giveAttackVelo; }
 	void SetGiveAttackVelo(Vector3 giveAttackVelo) { m_giveAttackVelo = giveAttackVelo; }

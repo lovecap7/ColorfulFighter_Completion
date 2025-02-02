@@ -23,10 +23,8 @@ private:
 	Vector3 m_giveAttackVelo;//攻撃によって相手を動かす力
 	Vector3 m_giveThrowVelo;//投げが与える力
 	int m_handle;		//プレイヤーの現在の画像
-
 	//キャラクター
 	std::shared_ptr<Chara> m_chara;
-
 	//プレイヤーの状態管理
 	bool m_isSameColor;		//相手と同じ色ならtrue
 	bool m_isLeft;			//trueなら左向き
@@ -46,16 +44,12 @@ private:
 	void CheckGround();//地上にいるかチェック
 	void Gravity();//重力
 	void LookDir(Player& enemy);//相手のほうを向く
-
 	//選んだ技のインデックス
 	int m_selectCommandIndex[3];
-	
-
 	//押し合い判定
 	Box m_pushBox;
 	//押し合い判定の初期化
 	void InitPushBox();
-	
 	//やられ判定
 	Box m_hitBoxHead;
 	Box m_hitBoxBody;
@@ -70,8 +64,7 @@ private:
 	int m_animCountFrame;	//フレームを数える
 	int m_animIndex;	//アニメーションの番号を数える(1増える毎にアニメーションが進む)
 	int m_animNum;		//アニメーションの数
-	int m_oneAnimFrame;	//1枚のアニメーションにかかるフレーム
-
+	int m_oneAnimIntervalFrame;	//1枚のアニメーションにかかるフレーム
 	//攻撃手段　パンチとかキックとか
 	AttackTypes m_attackType;
 	int m_startAttackFrame;//攻撃の発生
@@ -79,22 +72,16 @@ private:
 	int m_giveNoActFrame;	//自分が攻撃したとき相手が動けないフレーム
 	int m_giveGuardFrame;	//自分が攻撃したとき相手がガードをして動けないフレーム
 	float m_giveDamage;		//相手に与えるダメージ
-
 	int m_guardFrame;		//自分がガードで動けないフレーム
 	Vector3 m_knockback;		//自分が吹っ飛ばされる力
-
-	void DrawHitBox(const Camera& camera);//当たり判定の表示
-	bool isCheckAttackBox = false;//攻撃判定の可視化
-
 	//敵に攻撃を当てたかどうか
-	bool HitCheck(std::shared_ptr<Player> enemy);
+	bool CheckHit(std::shared_ptr<Player> enemy);
 	//敵につかみを当てたかどうか
-	bool HitGraspCheck(std::shared_ptr<Player> enemy);
+	bool CheckHitGrasp(std::shared_ptr<Player> enemy);
 	//現在の攻撃の属性
 	AttackAttributes m_attackAttributes;
 	int m_noActFrame;		//自分が動けないフレーム
 	int m_allNoActFrame;		//自分が動けない全体フレーム
-
 	//SE
 	std::shared_ptr<SE> m_se;
 	//ハンドル
@@ -120,7 +107,6 @@ private:
 	void WinSE();
 	//影
 	void DrawShadow(const Camera& camera);
-
 	//同じボタンを押し続けている場合20フレームだけ入力を取りたい
 	struct PressBottun
 	{
@@ -140,7 +126,6 @@ private:
 	//プレイヤー専用の入力
 	void PlayerInput(Input& input);
 	void CheckContinuePressBottun(PressBottun& bottun);
-	
 
 	//メンバ関数ポインタの準備
 //Update
@@ -233,6 +218,9 @@ private:
 	//アニメーションのフレームを保存する
 	int debugJumpFrame = 0;
 	int debugCommandFrame = 0;
+	//当たり判定の表示
+	void DrawHitBox(const Camera& camera);
+	bool m_isCheckAttackBox = false;//攻撃判定の可視化
 #endif
 public:
 	Player(PlayerIndex playeIndex, int* selectCommandIndex, CharaColorIndex charaColorIndex, bool isSameColor);
@@ -240,7 +228,6 @@ public:
 	void Init(float X, bool isLeft);
 	void Update(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager);
 	void Draw(const Camera& camera);
-
 	//なんPなのか
 	PlayerIndex GetPlayerIndex() { return m_playerIndex; }
 	//硬直
@@ -250,12 +237,8 @@ public:
 		m_allNoActFrame = noActFrame;		//自分が動けない全体フレーム
 	}
 	void SetGuardFrame(int guardFrame) { m_guardFrame = guardFrame; }
+	//ノックバック
 	void SetKnockback(Vector3 knockback) { m_knockback = knockback; }
-	//Get
-	bool GetDirState() const { return m_isLeft; }//向いてる方向
-	bool GetIsGuard() const { return m_isGuard; }//ガードをしているか
-	bool GetIsGround() const { return m_isGround; }//地上にいるか
-
 	//座標
 	Vector3 GetPos() { return m_pos; }
 	void SetPos(Vector3 vec) { m_pos = vec; }
@@ -265,6 +248,22 @@ public:
 	void AddVelo(Vector3 vec) { m_velocity += vec; }
 	void SetVeloX(float x) { m_velocity.x = x; }
 	void SetVeloY(float y) { m_velocity.y = y; }
+	//bool
+	bool GetDirState() const { return m_isLeft; }//向いてる方向
+	bool IsGuard() const { return m_isGuard; }//ガードをしているか
+	bool IsGround() const { return m_isGround; }//地上にいるか
+	bool IsCommand() { return m_isCommand; }//コマンド技をしている
+	bool IsSquat() const { return m_isSquat; }//しゃがんでるか
+	bool IsThrowSuccess() const { return m_isThrowSuccess; }//つかみが成功したか
+	//投げの処理で使う
+	bool IsHitAttack() const { return m_isHitAttack; }//攻撃が当たったか
+	bool IsHitGrasp() const { return m_isHitGrasp; }//つかみが当たったか
+	//true投げぬけにする
+	void OnIsThrownSuccess() { m_isThrowSuccess = true; }
+	//投げられたらtrueにする
+	void OnIsThrown() { m_isThrown = true; }
+	//攻撃が当たりキャンセルができるようにする
+	void OnIsPossibleCancel() { m_isPossibleCancel = true; }
 	//投げの速度（力）
 	void SetThrowVelo(Vector3 vec) { m_giveThrowVelo = vec; }
 	//HP
@@ -275,7 +274,7 @@ public:
 	void SetAnimNum(int animNum) { m_animNum = animNum; }//アニメーションの数
 	void SetAnimIndex(int animIndex) { m_animIndex = animIndex; }//現在のアニメーションを特定のタイミングから始めたいときとかに使う
 	int GetAnimIndex() { return m_animIndex; }//現在のアニメーションを特定のタイミングから始めたいときとかに使う
-	void SetOneAnimFrame(int oneAnimFrame) { m_oneAnimFrame = oneAnimFrame; }//アニメーション１枚にかかるフレーム
+	void SetOneAnimFrame(int oneAnimFrame) { m_oneAnimIntervalFrame = oneAnimFrame; }//アニメーション１枚にかかるフレーム
 	int GetAnimCountFrame() { return m_animCountFrame; }//アニメーションのフレーム
 	void SetAttackAttributes(AttackAttributes attackAttributes) { m_attackAttributes = attackAttributes; }//攻撃属性
 	void SetStartAttackFrame(int startAttackFrame) { m_startAttackFrame = startAttackFrame; }//攻撃の発生
@@ -286,7 +285,6 @@ public:
 	//攻撃によって相手に与えるVelo
 	Vector3 GetGiveAttackVelo() { return m_giveAttackVelo; }
 	void SetGiveAttackVelo(Vector3 giveAttackVelo) { m_giveAttackVelo = giveAttackVelo; }
-
 	//プレイヤーの攻撃の手段
 	AttackTypes GetAttackAttackTypes() { return m_attackType; }
 	//プレイヤーの攻撃の属性取得
@@ -298,16 +296,6 @@ public:
 	Box GetHitBoxBody() { return  m_hitBoxBody; }
 	Box GetHitBoxLeg() { return  m_hitBoxLeg; }
 	Box GetHitBoxAttack() { return  m_hitBoxAttack; }
-	//投げの処理で使う
-	bool GetIsHitAttack() const { return m_isHitAttack; }//攻撃が当たったか
-	bool GetIsHitGrasp() const { return m_isHitGrasp; }//つかみが当たったか
-	//true投げぬけにする
-	void OnIsThrownSuccess() { m_isThrowSuccess = true; }
-	//投げられたらtrueにする
-	void OnIsThrown() { m_isThrown = true; }
-	//攻撃が当たりキャンセルができるようにする
-	void OnIsPossibleCancel() { m_isPossibleCancel = true; }
-
 	//当たり判定とか
 	void ResetAttackBox() {
 		//攻撃の判定をリセット
@@ -354,9 +342,8 @@ public:
 		m_pushBox.y2 = 0;
 	}
 	//当たったことをリセット
-	void ResetIsHitAttack() { m_isHitAttack = false; }
-	void ResetIsHitGrasp() { m_isHitGrasp = false; }
-
+	void OffIsHitAttack() { m_isHitAttack = false; }
+	void OffIsHitGrasp() { m_isHitGrasp = false; }
 	//やられ判定や攻撃判定のセット
 	void SetHitBoxHead(Box hitBoxHead) { m_hitBoxHead = hitBoxHead; }//頭
 	void SetHitBoxBody(Box hitBoxBody) { m_hitBoxBody = hitBoxBody; }//体
@@ -364,13 +351,9 @@ public:
 	void SetHitBoxThrow(Box hitBoxThrow) { m_hitBoxThrow = hitBoxThrow; }//つかまれる判定
 	void SetHitBoxAttack(Box hitBoxAttack) { m_hitBoxAttack = hitBoxAttack; }//攻撃判定
 	void SetHitBoxGrasp(Box hitBoxGrasp) { m_hitBoxGrasp = hitBoxGrasp; }//つかみ判定
-
 	float GetGiveDamage() const { return m_giveDamage; }//相手に与えるダメージの参照
 	int  GetGiveNoActFrame() const { return m_giveNoActFrame; }//相手に与える硬直フレームの参照
 	int  GetGiveGuardFrame() const { return m_giveGuardFrame; }//相手に与えるガード硬直フレームの参照
-	bool GetIsSquat() const { return m_isSquat; }//しゃがんでるか
-	bool GetIsThrowSuccess() const { return m_isThrowSuccess; }//つかみが成功したか
-
 	//グラフィックを変化するタイミングをゲームマネージャーしてもらう
 	void LoadStateHit();//やられ
 	void LoadStateBeThrown();//投げられ
@@ -379,8 +362,5 @@ public:
 	void LoadStateGuardSquat();//しゃがみガード
 	void LoadStateDown();//ダウン
 	void LoadStateDownAerial();//空中ダウン
-
-	//コマンド技をしている
-	bool GetIsCommand() { return m_isCommand; }
 };
 

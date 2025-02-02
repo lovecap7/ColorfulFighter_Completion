@@ -1046,7 +1046,7 @@ void CommandSelectScene::Draw()
 	DrawGraph(0, Game::kScreenHeight - 50, m_operationHandle, true);
 
 	//フェードイン
-	m_fadeManager->WhiteFadeDraw(m_isFadeIn);
+	m_fadeManager->DrawWhiteFade(m_isFadeIn);
 	//フェードインしきってから表示
 	if (m_fadeManager->IsFinishFadeIn())
 	{

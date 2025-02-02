@@ -44,7 +44,6 @@ private:
     int m_operationHandle;
     //Loading中の画像
     int m_loadingHandle;
-
     //アニメーション関連
     //キャラクターアニメーション
     int m_animIndexP1;
@@ -52,7 +51,6 @@ private:
     int m_animCountFrame;
     //カーソルの点滅に使う
     int m_blinkCountFrame;
-
     //サウンド
     std::shared_ptr<BGM> m_bgm;
     std::shared_ptr<SE> m_seP1;
@@ -62,11 +60,9 @@ private:
     int m_readySeHandle;//準備完了音
     int m_cursorMoveSeHandle;//カーソル移動音
     int m_cancelSeHandle;//キャンセル音
-
-       //フェードインするために使う
+    //フェードインするために使う
     std::shared_ptr<FadeManager> m_fadeManager;
     bool m_isFadeIn;
-
     //コマンド技を選ぶ処理に使う
      //現在の技のセレクト番号
     int m_currentSelectCommandIndexP1;
@@ -87,7 +83,6 @@ private:
     //コマンド技の説明を表示するかどうか
     bool m_isCommandInfoDisplayP1;
     bool m_isCommandInfoDisplayP2;
-
     //関数達
     //コマンド技を選ぶ処理(処理は同じだけど引数が多すぎ複雑になったので分けちゃった)
     void SelectCommandP1(Input& input);

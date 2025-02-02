@@ -14,26 +14,27 @@ class SE;
 class Chara
 {	
 private:
-	//SE
-	std::shared_ptr<SE> m_se;
+	//voice
 	std::shared_ptr<SE> m_voice;
+	int m_attack1VoiceHandle;
+	int m_attack2VoiceHandle;
+	int m_attack3VoiceHandle;
+	int m_damage1VoiceHandle;
+	int m_damage2VoiceHandle;
+	int m_standUp1VoiceHandle;
+	int m_standUp2VoiceHandle;
+	void VoiceSe(int voiceHandle);
+	//se
+	std::shared_ptr<SE> m_se;
 	int m_commandSeHandle[9];
 	void CommandSe(int commandIndex);
-	int m_attack1SeHandle;
-	int m_attack2SeHandle;
-	int m_attack3SeHandle;
-	int m_damage1SeHandle;
-	int m_damage2SeHandle;
-	int m_standUp1SeHandle;
-	int m_standUp2SeHandle;
-	void VoiceSe(int voiceHandle);
 	//選んだ技のインデックス
 	int m_selectCommandIndex[3];
 	bool CheckMyCommand();
 	//色
 	CharaColorIndex m_charaColorIndex;
-	void ColorInit(CharaColorIndex charaColorIndex);
-
+	void InitColor(CharaColorIndex charaColorIndex);
+	//コマンド技
 	enum class Command
 	{
 		Null,		//0をコマンド失敗という意味にしたい
@@ -48,8 +49,6 @@ private:
 		Wildhant,//ワイルドハント
 	};
 	int m_commandIndex;//何のコマンドを呼ぶのかを記録
-
-
 	//波動拳
 	//コマンド技モーション取得
 	void GetAnimCommand1(Player& player);
@@ -140,7 +139,6 @@ private:
 	//コマンド技の内容（動き）
 	void MovementCommand9(Player& player, Bullet& bullet, Player& enemy);
 
-
 	//モーション
 	int m_idleStandHandel;//待機
 	int m_idleSquatHandel;//しゃがみ待機
@@ -162,22 +160,20 @@ private:
 	int m_punchHighAerialHandle;//空中強パンチ
 	int m_kickLightAerialHandle;//空中弱キック
 	int m_kickHighAerialHandle;//空中強キック
-
-
+	//ガード
 	int m_guardStandHandle;//立ちガード
 	int m_guardSquatHandle;//しゃがみガード
-
 	//投げ
 	int m_graspHandle;//つかみ
 	int m_throwFrontHandle;//前投げ
 	int m_throwBackHandle;//後ろ投げ
-
+	//ヒット時
 	int m_damageStandHandle;//喰らい
 	int m_damageAerialHandle;//喰らい
 	int m_downHandle;//ダウン
 	int m_downAerialHandle;//空中ダウン
 	int m_standUpHandle;//起き上がり
-
+	//コマンド技
 	int m_commandHandle1;//コマンド技
 	int m_commandHandle2;//コマンド技
 	int m_commandHandle3;//コマンド技
@@ -187,17 +183,15 @@ private:
 	int m_commandHandle7;//コマンド技
 	int m_commandHandle8;//コマンド技
 	int m_commandHandle9;//コマンド技
-
-	int m_winPoseHandle;//勝利ポーズ
-
+	//勝利ポーズ
+	int m_winPoseHandle;
 	//攻撃の属性を覚えておく
 	AttackTypes lastAttackType;
-
 	//攻撃によって自分が動く際に使う
 	Vector3 m_velocity;
 	int m_handle;//画像
 	int m_animNum;//アニメーションの数
-	int m_oneAnimFrame;//アニメーション１枚にかかるフレーム
+	int m_oneAnimIntervalFrame;//アニメーション１枚にかかるフレーム
 	int m_allFrame;//全体フレーム
 	AttackAttributes m_attackAttributes;//攻撃属性
 	int m_startAttackFrame;//攻撃の発生
@@ -208,7 +202,6 @@ private:
 	//攻撃によって相手に与えるVelo
 	Vector3 m_giveAttackVelo;
 public:
-	
 	Chara(int* index,CharaColorIndex charaColorIndex);
 	~Chara();
 	//立ちモーション取得
@@ -237,10 +230,7 @@ public:
 	//ジャンプモーションの当たり判定(右向き)
 	void GetHitBoxJump(Player& player) ;
 
-
-
 	//立ち
-	
 	//弱パンチモーション取得
 	void GetAnimPunchLight(Player& player);
 	//やられ判定　投げやられ判定　攻撃判定
@@ -249,7 +239,6 @@ public:
 	//弱パンチが相手にもたらす効果
 	void GetGiveEffectPunchLight(Player& player) ;
 
-
 	//強パンチモーション取得
 	void GetAnimPunchHigh(Player& player) ;
 	//強パンチモーションの当たり判定(右向き)
@@ -257,14 +246,12 @@ public:
 	//強パンチが相手にもたらす効果
 	void GetGiveEffectPunchHigh(Player& player) ;
 
-
 	//弱キックモーション取得
 	void GetAnimKickLight(Player& player) ;
 	//弱キックモーションの当たり判定(右向き)
 	void GetHitBoxKickLight(Player& player) ;
 	//弱キックが相手にもたらす効果
 	void GetGiveEffectKickLight(Player& player);
-
 
 	//強キックモーション取得
 	void GetAnimKickHigh(Player& player) ;
@@ -282,7 +269,6 @@ public:
 	//しゃがみ弱パンチが相手にもたらす効果
 	void GetGiveEffectPunchLightSquat(Player& player) ;
 
-
 	//しゃがみ強パンチモーション取得
 	void GetAnimPunchHighSquat(Player& player) ;
 	//やられ判定　投げやられ判定　攻撃判定
@@ -290,7 +276,6 @@ public:
 	void GetHitBoxPunchHighSquat(Player& player) ;
 	//しゃがみ強パンチが相手にもたらす効果
 	void GetGiveEffectPunchHighSquat(Player& player) ;
-
 
 	//しゃがみ弱キックモーション取得
 	void GetAnimKickLightSquat(Player& player) ;
@@ -300,7 +285,6 @@ public:
 	//しゃがみ弱キックが相手にもたらす効果
 	void GetGiveEffectKickLightSquat(Player& player) ;
 
-
 	//しゃがみ強キックモーション取得
 	void GetAnimKickHighSquat(Player& player) ;
 	//やられ判定　投げやられ判定　攻撃判定
@@ -308,8 +292,6 @@ public:
 	void GetHitBoxKickHighSquat(Player& player) ;
 	//しゃがみ強キックが相手にもたらす効果
 	void GetGiveEffectKickHighSquat(Player& player) ;
-
-
 
 	//空中弱パンチモーション取得
 	void GetAnimPunchLightAerial(Player& player) ;
