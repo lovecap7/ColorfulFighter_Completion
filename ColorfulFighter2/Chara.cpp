@@ -1074,7 +1074,7 @@ void Chara::GetGiveEffectPunchLight(Player& player)
 	player.SetGiveGuardFrame(m_giveGuardFrame);
 	player.SetAttackAttributes(m_attackAttributes);
 	//‘ŠŽè‚ð“®‚©‚·
-	m_giveAttackVelo.x = 3;
+	m_giveAttackVelo.x = 5;
 	m_giveAttackVelo.y = 0;
 	player.SetGiveAttackVelo(m_giveAttackVelo);
 }
