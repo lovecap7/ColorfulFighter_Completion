@@ -1,20 +1,20 @@
 #pragma once
 struct Box
 {
-	int x1;//ç∂
-	int y1;//è„
-	int x2;//âE
-	int y2;//â∫
+	float x1;//ç∂
+	float y1;//è„
+	float x2;//âE
+	float y2;//â∫
 
 	Box()
 	{
-		x1 = 0;
-		y1 = 0;
-		x2 = 0;
-		y2 = 0;
+		x1 = 0.0f;
+		y1 = 0.0f;
+		x2 = 0.0f;
+		y2 = 0.0f;
 	}
 
-	Box(int X1,int Y1,int X2,int Y2)
+	Box(float X1, float Y1, float X2, float Y2)
 	{
 		x1 = X1;
 		y1 = Y1;

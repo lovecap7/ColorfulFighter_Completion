@@ -18,21 +18,21 @@ namespace
 
 	//波動拳
 	//弾の判定
-	constexpr int kHadouRadius = 40.0f;
+	constexpr float kHadouRadius = 40.0f;
 	//弾の番号
 	constexpr int kStartHadouAnimIndex = 211;
 	constexpr int kFinishHadouAnimIndex = 214;
 	//弾の位置の調整
-	constexpr int kHadouOffsetPosX = 120;
+	constexpr float kHadouOffsetPosX = 120.0f;
 	//速度
 	constexpr float kHadouVeloXLight = 15.0f;
 	constexpr float kHadouVeloXHigh = 25.0f;
 	
 	//ソニックブーム
 	//弾の判定
-	constexpr int kSonicRadius = 40.0f;
+	constexpr float kSonicRadius = 40.0f;
 	//弾の位置の調整
-	constexpr int kSonicOffsetPosX = 120;
+	constexpr float kSonicOffsetPosX = 120.0f;
 	//弾の番号
 	constexpr int kStartSonicAnimIndex = 231;
 	constexpr int kFinishSonicAnimIndex = 234;
@@ -42,13 +42,13 @@ namespace
 
 	//パワーウェイブ
 	//弾の判定
-	constexpr int kPowerWaveRadiusX = 50.0f;
-	constexpr int kPowerWaveRadiusY = 30.0f;
+	constexpr float kPowerWaveRadiusX = 50.0f;
+	constexpr float kPowerWaveRadiusY = 30.0f;
 	//弾の番号
 	constexpr int kStartPowerWaveAnimIndex = 6;
 	constexpr int kFinishPowerWaveAnimIndex = 9;
 	//弾の位置の調整
-	constexpr int kPowerWaveOffsetPosY = 120;
+	constexpr float kPowerWaveOffsetPosY = 120.0f;
 	//速度
 	constexpr float kWaveVeloXLight = 15.0f;
 	constexpr float kWaveVeloXHigh = 30.0f;
@@ -338,10 +338,10 @@ void Bullet::Draw(Camera& camera)
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 	//攻撃判定
 	DxLib::DrawBox(
-		(static_cast<int>(m_pos.x) + m_hitBoxAttack.x1) + camera.m_drawOffset.x,
-		(static_cast<int>(m_pos.y) + m_hitBoxAttack.y1) + camera.m_drawOffset.y,
-		(static_cast<int>(m_pos.x) + m_hitBoxAttack.x2) + camera.m_drawOffset.x,
-		(static_cast<int>(m_pos.y) + m_hitBoxAttack.y2) + camera.m_drawOffset.y,
+		static_cast<int>(m_pos.x + m_hitBoxAttack.x1 + camera.m_drawOffset.x),
+		static_cast<int>(m_pos.y + m_hitBoxAttack.y1 + camera.m_drawOffset.y),
+		static_cast<int>(m_pos.x + m_hitBoxAttack.x2 + camera.m_drawOffset.x),
+		static_cast<int>(m_pos.y + m_hitBoxAttack.y2 + camera.m_drawOffset.y),
 		0xff0000, true);
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 100);
 #endif

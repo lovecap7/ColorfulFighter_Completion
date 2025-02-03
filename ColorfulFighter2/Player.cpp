@@ -77,7 +77,9 @@ namespace
 
 	//âeÇÃYç¿ïW
 	constexpr int kShadowPosY = 1510;
-
+	//âeÇÃîºåa
+	constexpr float kShadowRadiusX = 120.0f;
+	constexpr float kShadowRadiusY = 30.0f;
 	//ÉXÉeÅ[ÉWÇÃëÂÇ´Ç≥
 	constexpr int kStageWidth = 2600;
 
@@ -351,9 +353,10 @@ void Player::DrawShadow(const Camera& camera)
 {
 	//âe
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
-	DrawOval(m_pos.x + static_cast<int>(camera.m_drawOffset.x), 
-		kShadowPosY + static_cast<int>(camera.m_drawOffset.y),
-		120, 30, 0x000000, true);
+	//ë»â~
+	DrawOvalAA(m_pos.x + camera.m_drawOffset.x, 
+		kShadowPosY + camera.m_drawOffset.y,
+		kShadowRadiusX, kShadowRadiusY,20, 0x000000, true);
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 

@@ -281,7 +281,7 @@ public:
 	void SetFinishAttackFrame(int finishAttackFrame) { m_finishAttackFrame = finishAttackFrame; }//攻撃持続終了
 	void SetGiveNoActFrame(int giveNoActFrame) { m_giveNoActFrame = giveNoActFrame; }//硬直
 	void SetGiveGuardFrame(int giveGuardFrame) { m_giveGuardFrame = giveGuardFrame; }//ガード硬直
-	void SetGiveDamage(int giveDamage) { m_giveDamage = giveDamage; }//ダメージ
+	void SetGiveDamage(float giveDamage) { m_giveDamage = giveDamage; }//ダメージ
 	//攻撃によって相手に与えるVelo
 	Vector3 GetGiveAttackVelo() { return m_giveAttackVelo; }
 	void SetGiveAttackVelo(Vector3 giveAttackVelo) { m_giveAttackVelo = giveAttackVelo; }
