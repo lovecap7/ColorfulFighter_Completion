@@ -656,55 +656,55 @@ void Player::DrawHitBox(const Camera& camera)
 	{
 		//âüÇµçáÇ¢îªíË
 		DxLib::DrawBox(
-			(static_cast<int>(m_pos.x) - m_pushBox.x1) + camera.m_drawOffset.x,
-			(static_cast<int>(m_pos.y) - m_pushBox.y1) + camera.m_drawOffset.y,
-			(static_cast<int>(m_pos.x) + m_pushBox.x2) + camera.m_drawOffset.x,
-			(static_cast<int>(m_pos.y) + m_pushBox.y2) + camera.m_drawOffset.y,
+			static_cast<int>(m_pos.x - m_pushBox.x1 + camera.m_drawOffset.x),
+			static_cast<int>(m_pos.y - m_pushBox.y1 + camera.m_drawOffset.y),
+			static_cast<int>(m_pos.x + m_pushBox.x2 + camera.m_drawOffset.x),
+			static_cast<int>(m_pos.y + m_pushBox.y2 + camera.m_drawOffset.y),
 			0x00ff00, true);
 
 		//ì™
 		DxLib::DrawBox(
-			(static_cast<int>(m_pos.x) + m_hitBoxHead.x1) + camera.m_drawOffset.x,
-			(static_cast<int>(m_pos.y) + m_hitBoxHead.y1) + camera.m_drawOffset.y,
-			(static_cast<int>(m_pos.x) + m_hitBoxHead.x2) + camera.m_drawOffset.x,
-			(static_cast<int>(m_pos.y) + m_hitBoxHead.y2) + camera.m_drawOffset.y,
+			static_cast<int>(m_pos.x + m_hitBoxHead.x1 + camera.m_drawOffset.x),
+			static_cast<int>(m_pos.y + m_hitBoxHead.y1 + camera.m_drawOffset.y),
+			static_cast<int>(m_pos.x + m_hitBoxHead.x2 + camera.m_drawOffset.x),
+			static_cast<int>(m_pos.y + m_hitBoxHead.y2 + camera.m_drawOffset.y),
 			0x000fff, true);
 		//ì∑ëÃ
 		DxLib::DrawBox(
-			(static_cast<int>(m_pos.x) + m_hitBoxBody.x1) + camera.m_drawOffset.x,
-			(static_cast<int>(m_pos.y) + m_hitBoxBody.y1) + camera.m_drawOffset.y,
-			(static_cast<int>(m_pos.x) + m_hitBoxBody.x2) + camera.m_drawOffset.x,
-			(static_cast<int>(m_pos.y) + m_hitBoxBody.y2) + camera.m_drawOffset.y,
+			static_cast<int>(m_pos.x + m_hitBoxBody.x1 + camera.m_drawOffset.x),
+			static_cast<int>(m_pos.y + m_hitBoxBody.y1 + camera.m_drawOffset.y),
+			static_cast<int>(m_pos.x + m_hitBoxBody.x2 + camera.m_drawOffset.x),
+			static_cast<int>(m_pos.y + m_hitBoxBody.y2 + camera.m_drawOffset.y),
 			0x0000ff, true);
 		//ë´
 		DxLib::DrawBox(
-			(static_cast<int>(m_pos.x) + m_hitBoxLeg.x1) + camera.m_drawOffset.x,
-			(static_cast<int>(m_pos.y) + m_hitBoxLeg.y1) + camera.m_drawOffset.y,
-			(static_cast<int>(m_pos.x) + m_hitBoxLeg.x2) + camera.m_drawOffset.x,
-			(static_cast<int>(m_pos.y) + m_hitBoxLeg.y2) + camera.m_drawOffset.y,
+			static_cast<int>(m_pos.x + m_hitBoxLeg.x1 + camera.m_drawOffset.x),
+			static_cast<int>(m_pos.y + m_hitBoxLeg.y1 + camera.m_drawOffset.y),
+			static_cast<int>(m_pos.x + m_hitBoxLeg.x2 + camera.m_drawOffset.x),
+			static_cast<int>(m_pos.y + m_hitBoxLeg.y2 + camera.m_drawOffset.y),
 			0x0000ff, true);
 		//ìäÇ∞Ç¬Ç©Ç›îªíË 60x150
 		DxLib::DrawBox(
-			(static_cast<int>(m_pos.x) + m_hitBoxThrow.x1) + camera.m_drawOffset.x,
-			(static_cast<int>(m_pos.y) + m_hitBoxThrow.y1) + camera.m_drawOffset.y,
-			(static_cast<int>(m_pos.x) + m_hitBoxThrow.x2) + camera.m_drawOffset.x,
-			(static_cast<int>(m_pos.y) + m_hitBoxThrow.y2) + camera.m_drawOffset.y,
+			static_cast<int>(m_pos.x + m_hitBoxThrow.x1 + camera.m_drawOffset.x),
+			static_cast<int>(m_pos.y + m_hitBoxThrow.y1 + camera.m_drawOffset.y),
+			static_cast<int>(m_pos.x + m_hitBoxThrow.x2 + camera.m_drawOffset.x),
+			static_cast<int>(m_pos.y + m_hitBoxThrow.y2 + camera.m_drawOffset.y),
 			0xffffff, true);
 		if (m_isCheckAttackBox)
 		{
 			//çUåÇîªíË
 			DxLib::DrawBox(
-				(static_cast<int>(m_pos.x) + m_hitBoxAttack.x1) + camera.m_drawOffset.x,
-				(static_cast<int>(m_pos.y) + m_hitBoxAttack.y1) + camera.m_drawOffset.y,
-				(static_cast<int>(m_pos.x) + m_hitBoxAttack.x2) + camera.m_drawOffset.x,
-				(static_cast<int>(m_pos.y) + m_hitBoxAttack.y2) + camera.m_drawOffset.y,
+				static_cast<int>(m_pos.x + m_hitBoxAttack.x1 + camera.m_drawOffset.x),
+				static_cast<int>(m_pos.y + m_hitBoxAttack.y1 + camera.m_drawOffset.y),
+				static_cast<int>(m_pos.x + m_hitBoxAttack.x2 + camera.m_drawOffset.x),
+				static_cast<int>(m_pos.y + m_hitBoxAttack.y2 + camera.m_drawOffset.y),
 				0xff0000, true);
 			//çUåÇîªíË
 			DxLib::DrawBox(
-				(static_cast<int>(m_pos.x) + m_hitBoxGrasp.x1) + camera.m_drawOffset.x,
-				(static_cast<int>(m_pos.y) + m_hitBoxGrasp.y1) + camera.m_drawOffset.y,
-				(static_cast<int>(m_pos.x) + m_hitBoxGrasp.x2) + camera.m_drawOffset.x,
-				(static_cast<int>(m_pos.y) + m_hitBoxGrasp.y2) + camera.m_drawOffset.y,
+				static_cast<int>(m_pos.x + m_hitBoxGrasp.x1 + camera.m_drawOffset.x),
+				static_cast<int>(m_pos.y + m_hitBoxGrasp.y1 + camera.m_drawOffset.y),
+				static_cast<int>(m_pos.x + m_hitBoxGrasp.x2 + camera.m_drawOffset.x),
+				static_cast<int>(m_pos.y + m_hitBoxGrasp.y2 + camera.m_drawOffset.y),
 				0xffff00, true);
 		}
 	}

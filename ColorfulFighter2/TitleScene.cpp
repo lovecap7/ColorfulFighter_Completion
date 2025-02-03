@@ -352,6 +352,7 @@ void TitleScene::UpdateDemo(Input& input, Input& input2)
 		m_actor2.handle = m_walkHandle;
 		m_actor2.animNum = kAnimNum;
 		m_actor2.oneAnimFrame = kIWalkOneAnimFrame;
+		m_titleFadeCountFrame = 0;
 		m_update = &TitleScene::UpdateOpening;
 		m_draw = &TitleScene::DrawOpening;
 		return;
