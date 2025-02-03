@@ -5,6 +5,10 @@
 
 namespace
 {
+	//アイコンの位置
+	constexpr float kIconPosXP1 = 70;
+	constexpr float kIconPosXP2 = Game::kScreenWidth - 100 - 70;
+	constexpr float kIconPosY = 30;
 	//HPバーの座標
 	constexpr float kHpPosXP1 = (Game::kScreenWidth / 2) - 120.0f;//X座標の起点
 	constexpr float kHpPosXP2 = (Game::kScreenWidth / 2) + 120.0f;//X座標の起点
@@ -198,7 +202,8 @@ void UI::InitKoSpriteEffect()
 void UI::DrawPlayerIcon()
 {
 	//HPバーの横に描画
-	DrawGraph(100, kHpPosY, m_p1IconHandle, true);
+	DrawGraph(kIconPosXP1, kIconPosY, m_p1IconHandle, true);
+	DrawGraph(kIconPosXP2, kIconPosY, m_p2IconHandle, true);
 }
 
 void UI::UpdateDamage()
