@@ -198,7 +198,7 @@ private:
 	int m_finishAttackFrame;//攻撃持続終了
 	int m_giveNoActFrame;//硬直
 	int m_giveGuardFrame;//ガード硬直
-	int m_giveDamage;//ダメージ
+	float m_giveDamage;//ダメージ
 	//攻撃によって相手に与えるVelo
 	Vector3 m_giveAttackVelo;
 public:
