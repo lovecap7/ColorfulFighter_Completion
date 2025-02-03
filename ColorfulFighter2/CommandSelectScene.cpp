@@ -47,13 +47,13 @@ namespace
 	//選べるコマンド技の数
 	constexpr int kSelectCommandNum = 3;
 	//選んだ技の表示位置
-	constexpr int kSelectedCommandOffsetPosX = kCommandIconImageWidth * kCommandIconImageScale;
-	constexpr int kSelectedCommandPosY = Game::kScreenHeight / 2 + 100;
+	constexpr float kSelectedCommandOffsetPosX = kCommandIconImageWidth * kCommandIconImageScale;
+	constexpr float kSelectedCommandPosY = Game::kScreenHeight / 2.0f + 100.0f;
 
 	//Ready
-	constexpr int kReadyPosXP1 = 50;
-	constexpr int kReadyPosXP2 = Game::kScreenWidth - 350;
-	constexpr int kReadyPosY = kSelectedCommandPosY + kIconRadius;
+	constexpr float kReadyPosXP1 = 50.0f;
+	constexpr float kReadyPosXP2 = Game::kScreenWidth - 350.0f;
+	constexpr float kReadyPosY = kSelectedCommandPosY + kIconRadius;
 
 	//BGMボリューム
 	constexpr int kBgmVolume = 120;
@@ -118,6 +118,11 @@ void CommandSelectScene::UpdateCharaAnim()
 
 void CommandSelectScene::SelectCommandP1(Input& input)
 {
+	//準備完了を互いにしている場合は操作できない
+	if (m_isReadyP1 && m_isReadyP2)
+	{
+		return;
+	}
 	if (m_isSelectFinishP1)
 	{
 		//説明を非表示
@@ -136,7 +141,7 @@ void CommandSelectScene::SelectCommandP1(Input& input)
 			m_animIndexP1 = 0;
 		}
 		//キャンセル
-		if (input.IsTrigger("B") && !m_isReadyP2)
+		if (input.IsTrigger("B"))
 		{
 			//取り消す
 			if (m_isReadyP1)
@@ -294,6 +299,11 @@ void CommandSelectScene::SelectCommandP1(Input& input)
 
 void CommandSelectScene::SelectCommandP2(Input& input)
 {
+	//準備完了を互いにしている場合は操作できない
+	if (m_isReadyP1 && m_isReadyP2)
+	{
+		return;
+	}
 	if (m_isSelectFinishP2)
 	{
 		//説明を非表示
@@ -312,7 +322,7 @@ void CommandSelectScene::SelectCommandP2(Input& input)
 			m_animIndexP2 = 0;
 		}
 		//取り消す
-		if (input.IsTrigger("B") && !m_isReadyP1)
+		if (input.IsTrigger("B"))
 		{
 			if (m_isReadyP2)
 			{
@@ -482,7 +492,7 @@ void CommandSelectScene::DrawCommandInfo()
 
 void CommandSelectScene::SelectColorP1(Input& input)
 {
-	if (!m_isSelectFinishP1)
+	if (!m_isReadyP1)
 	{
 		if (input.IsTrigger("X"))
 		{
@@ -497,20 +507,17 @@ void CommandSelectScene::SelectColorP1(Input& input)
 		{
 			m_currentColorIndexP1 = 0;
 		}
-	}
-	if (m_isReadyP1)
-	{
-		m_charaP1Handle = m_readyPoseHandle[m_currentColorIndexP1];
+		m_charaP1Handle = m_idlePoseHandle[m_currentColorIndexP1];
 	}
 	else
 	{
-		m_charaP1Handle = m_idlePoseHandle[m_currentColorIndexP1];
+		m_charaP1Handle = m_readyPoseHandle[m_currentColorIndexP1];
 	}
 }
 
 void CommandSelectScene::SelectColorP2(Input& input2)
 {
-	if (!m_isSelectFinishP2)
+	if (!m_isReadyP2)
 	{
 		if (input2.IsTrigger("X"))
 		{
@@ -525,14 +532,11 @@ void CommandSelectScene::SelectColorP2(Input& input2)
 		{
 			m_currentColorIndexP2 = 0;
 		}
-	}
-	if (m_isReadyP2)
-	{
-		m_charaP2Handle = m_readyPoseHandle[m_currentColorIndexP2];
+		m_charaP2Handle = m_idlePoseHandle[m_currentColorIndexP2];
 	}
 	else
 	{
-		m_charaP2Handle = m_idlePoseHandle[m_currentColorIndexP2];
+		m_charaP2Handle = m_readyPoseHandle[m_currentColorIndexP2];
 	}
 }
 
@@ -759,12 +763,12 @@ void CommandSelectScene::DrawSelectPlayerCommandIcon()
 	{
 		//選んだ技のアイコン
 		DrawRectRotaGraphFast(
-			kSelectedCommandOffsetPosX * (i + 1),
+			static_cast<float>(kSelectedCommandOffsetPosX * (i + 1)),
 			kSelectedCommandPosY,
 			0, 0, kCommandIconImageWidth, kCommandIconImageHight,
 			kCommandIconImageScale, 0.0f, m_selectCommandIconP1Handle[i], true);
 		DrawRectRotaGraphFast(
-			Game::kScreenWidth - kSelectedCommandOffsetPosX * (i + 1),
+			static_cast<float>(Game::kScreenWidth - kSelectedCommandOffsetPosX * (i + 1)),
 			kSelectedCommandPosY,
 			0, 0, kCommandIconImageWidth, kCommandIconImageHight,
 			kCommandIconImageScale, 0.0f, m_selectCommandIconP2Handle[i], true);
@@ -841,7 +845,12 @@ CommandSelectScene::CommandSelectScene(SceneController& controller) :
 		LoadGraph("./img/CharacterSelect/CommandInfo/Command7Info.png"),
 		LoadGraph("./img/CharacterSelect/CommandInfo/Command8Info.png"),
 		LoadGraph("./img/CharacterSelect/CommandInfo/Command9Info.png")
-	}
+	},
+	m_charaP1Handle(-1),
+	m_charaP2Handle(-1),
+	m_commandIconHandle{},
+	m_idlePoseHandle{},
+	m_readyPoseHandle{}
 {
 	//BGM
 	m_bgm = std::make_shared<BGM>();

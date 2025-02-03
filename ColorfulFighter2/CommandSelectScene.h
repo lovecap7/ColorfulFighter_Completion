@@ -12,9 +12,6 @@ class CommandSelectScene :
 {
 private:
     //描画関連
-    //キャラクターのアイコンハンドル
-    int m_iconEmptyHandle;
-    int m_iconChara1Handle;
     //コマンドのアイコン
     int m_commandIconHandle[9];
     int m_selectCommandIconP1Handle[3];//P1が選んだコマンドを表示

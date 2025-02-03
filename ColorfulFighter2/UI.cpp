@@ -25,7 +25,6 @@ namespace
 	//プレイヤーのHPの色
 	constexpr unsigned int kHpColorNormal = 0x33ff33;
 	constexpr unsigned int kHpColorPinch = 0xffff33;
-
 	//KO
 	constexpr float kCenterPosX = Game::kScreenWidth / 2;
 	constexpr float kCenterPosY = Game::kScreenHeight / 2;
@@ -34,15 +33,24 @@ namespace
 	constexpr int kKoHeight = 256;
 	//KOの文字が出てる時間
 	constexpr int kDisplayFinishRoundFrame = 180;
-	
 	//コマンドの数
 	constexpr int kCommandNum = 9;
 	//コマンドアイコンの大きさ
 	constexpr float kCommandIconImageScale = 0.5f;
 	constexpr int kCommandIconImageWidth = 200;
 	constexpr int kCommandIconImageHight = 200;
-
+	//ダメージ表記が残るフレーム
 	constexpr int kDamageDisplayFrame = 60;
+	//リザルトの表示位置
+	constexpr int kResultP1WinPosX = kCenterPosX - 500;
+	constexpr int kResultP2WinPosX = kCenterPosX + 500;
+	//KOインクの消える速さ
+	constexpr int kSpriteAlphaSpeed = 5;
+	//勝利数がわかるUIの位置
+	constexpr float kRound1WinP1PosX = (Game::kScreenWidth / 2) - 200;
+	constexpr float kRound2WinP1PosX = (Game::kScreenWidth / 2) - 150;
+	constexpr float kRound1WinP2PosX = (Game::kScreenWidth / 2) + 160;
+	constexpr float kRound2WinP2PosX = (Game::kScreenWidth / 2) + 110;
 }
 
 void UI::TimerUI(GameManager& gameManager)
@@ -145,14 +153,14 @@ void UI::UpdateRoundFinish(GameManager& gameManager)
 		{
 			//P1win
 			m_resultHandle = m_winnerHandle;
-			m_resultUiPos.x = kCenterPosX - 500;
+			m_resultUiPos.x = kResultP1WinPosX;
 			m_isResult = true;
 		}
 		else if (m_hpbarP1 < m_hpbarP2)
 		{
 			//P2win
 			m_resultHandle = m_winnerHandle;
-			m_resultUiPos.x = kCenterPosX + 500;
+			m_resultUiPos.x = kResultP2WinPosX;
 			m_isResult = true;
 		}
 	}
@@ -184,7 +192,7 @@ void UI::UpdateRoundFinish(GameManager& gameManager)
 
 void UI::UpdateKoSpriteFade()
 {
-	m_spriteAlpha -= 5;
+	m_spriteAlpha -= kSpriteAlphaSpeed;
 	++m_spriteVelo.y;
 	if (m_spriteAlpha < 0)
 	{
@@ -227,7 +235,7 @@ void UI::UpdateDamage()
 	}
 	else
 	{
-		m_damageDisplayCountFrameP1--;
+		--m_damageDisplayCountFrameP1;
 	}
 	if (m_damageDisplayCountFrameP2 <= 0)
 	{
@@ -236,7 +244,7 @@ void UI::UpdateDamage()
 	}
 	else
 	{
-		m_damageDisplayCountFrameP2--;
+		--m_damageDisplayCountFrameP2;
 	}
 }
 
@@ -279,11 +287,11 @@ void UI::DrawWinNum()
 	//勝ったラウンドの数UI
 	//勝った数表示
 	//P1
-	DrawGraph((Game::kScreenWidth / 2) - 200, 0, m_winRound1P1Handle, true);
-	DrawGraph((Game::kScreenWidth / 2) - 150, 0, m_winRound2P1Handle, true);
+	DrawGraph(kRound1WinP1PosX, 0, m_winRound1P1Handle, true);
+	DrawGraph(kRound2WinP1PosX, 0, m_winRound2P1Handle, true);
 	//P2
-	DrawGraph((Game::kScreenWidth / 2) + 110, 0, m_winRound2P2Handle, true);
-	DrawGraph((Game::kScreenWidth / 2) + 160, 0, m_winRound1P2Handle, true);
+	DrawGraph(kRound2WinP2PosX, 0, m_winRound2P2Handle, true);
+	DrawGraph(kRound1WinP2PosX, 0, m_winRound1P2Handle, true);
 }
 
 void UI::DrawHaveCommand()
@@ -324,11 +332,11 @@ void UI::DrawHpbar()
 	////P1のHPのバック
 	DrawBoxAA(kHpPosXP1, kHpPosY,
 		kHpPosXP1 - kHpWidth, kHpPosY + kHpHeight,
-		0x22222, true);
+		0x777777, true);
 	////P2のHPのバック
 	DrawBoxAA(kHpPosXP2, kHpPosY,
 		kHpPosXP2 + kHpWidth, kHpPosY + kHpHeight,
-		0x222222, true);
+		0x777777, true);
 
 	////P1のダメージ
 	DrawBoxAA(kHpPosXP1, kHpPosY,
@@ -513,10 +521,7 @@ UI::UI(int* selectCommandIndexP1, int* selectCommandIndexP2) :
 	m_resultUiPos(kCenterPosX, kCenterPosY - 200, 0),
 	m_displayFinishRoundCountFrame(0),
 	m_startRoundCount(0),
-	m_koHandle(-1),
-	m_roundTextHandle(-1),
 	m_roundNumHandle(-1),
-	m_fightHandle(-1),
 	m_sprite1Handle(-1),
 	m_sprite2Handle(-1),
 	m_sprite3Handle(-1),
@@ -532,38 +537,42 @@ UI::UI(int* selectCommandIndexP1, int* selectCommandIndexP2) :
 	m_blinkHpbarIntervalFrameP1(kBlinkHpbarNormalFrame),
 	m_blinkHpbarIntervalFrameP2(kBlinkHpbarNormalFrame),
 	m_hpColorP1(kHpColorNormal),
-	m_hpColorP2(kHpColorNormal)
-{
-	m_fightHandle = LoadGraph("./img/UI/RoundText/FIGHT.png");//FIGHT
-	m_winnerHandle = LoadGraph("./img/UI/RoundText/WINNER.png");//Winner
-	m_drawHandle = LoadGraph("./img/UI/RoundText/DRAW.png");//引き分け
-	m_koHandle = LoadGraph("./img/UI/RoundText/KO.png");//KO
-	m_timeupHandle = LoadGraph("./img/UI/RoundText/TIMEUP.png");//TimeUp
-	m_roundTextHandle = LoadGraph("./img/UI/RoundText/ROUND.png");
-
+	m_hpColorP2(kHpColorNormal),
+	m_beforeHpP1(0),
+	m_beforeHpP2(0),
+	m_commandIconHandle{},
+	m_damageDisplayCountFrameP1(0),
+	m_damageDisplayCountFrameP2(0),
+	m_fightHandle(LoadGraph("./img/UI/RoundText/FIGHT.png")),//FIGHT
+	m_winnerHandle(LoadGraph("./img/UI/RoundText/WINNER.png")),//Winner
+	m_drawHandle(LoadGraph("./img/UI/RoundText/DRAW.png")),//引き分け
+	m_koHandle(LoadGraph("./img/UI/RoundText/KO.png")),//KO
+	m_timeupHandle(LoadGraph("./img/UI/RoundText/TIMEUP.png")),//TimeUp
 	//ラウンドコール
-	m_roundTextHandle = LoadGraph("./img/UI/RoundText/ROUND.png");
-	m_round1Handle = LoadGraph("./img/UI/RoundText/1_ROUND.png");
-	m_round2Handle = LoadGraph("./img/UI/RoundText/2_ROUND.png");
-	m_round3Handle = LoadGraph("./img/UI/RoundText/3_ROUND.png");
-	m_roundOverHandle = LoadGraph("./img/UI/RoundText/OVERTIME.png");
-
+	m_roundTextHandle(LoadGraph("./img/UI/RoundText/ROUND.png")),
+	m_round1Handle(LoadGraph("./img/UI/RoundText/1_ROUND.png")),
+	m_round2Handle(LoadGraph("./img/UI/RoundText/2_ROUND.png")),
+	m_round3Handle(LoadGraph("./img/UI/RoundText/3_ROUND.png")),
+	m_roundOverHandle(LoadGraph("./img/UI/RoundText/OVERTIME.png")),
 	//タイマーの数字
-	m_timeZero = LoadGraph("./img/UI/Timer/0_Timer.png");	//0
-	m_timeOne = LoadGraph("./img/UI/Timer/1_Timer.png");	//1
-	m_timeTwo = LoadGraph("./img/UI/Timer/2_Timer.png");	//2
-	m_timeThree = LoadGraph("./img/UI/Timer/3_Timer.png");	//3
-	m_timeFour = LoadGraph("./img/UI/Timer/4_Timer.png");	//4
-	m_timeFive = LoadGraph("./img/UI/Timer/5_Timer.png");	//5
-	m_timeSix = LoadGraph("./img/UI/Timer/6_Timer.png");	//6
-	m_timeSeven = LoadGraph("./img/UI/Timer/7_Timer.png");	//7
-	m_timeEight = LoadGraph("./img/UI/Timer/8_Timer.png");	//8
-	m_timeNine = LoadGraph("./img/UI/Timer/9_Timer.png");	//9
+	m_timeZero(LoadGraph("./img/UI/Timer/0_Timer.png")),	//0
+	m_timeOne(LoadGraph("./img/UI/Timer/1_Timer.png")),	//1
+	m_timeTwo(LoadGraph("./img/UI/Timer/2_Timer.png")),	//2
+	m_timeThree(LoadGraph("./img/UI/Timer/3_Timer.png")),	//3
+	m_timeFour(LoadGraph("./img/UI/Timer/4_Timer.png")),	//4
+	m_timeFive(LoadGraph("./img/UI/Timer/5_Timer.png")),	//5
+	m_timeSix(LoadGraph("./img/UI/Timer/6_Timer.png")),	//6
+	m_timeSeven(LoadGraph("./img/UI/Timer/7_Timer.png")),	//7
+	m_timeEight(LoadGraph("./img/UI/Timer/8_Timer.png")),	//8
+	m_timeNine(LoadGraph("./img/UI/Timer/9_Timer.png")),	//9
 	//HP
-	m_hpFrameHandle = LoadGraph("./img/UI/Always/HpFrame.png");	//フレーム
+	m_hpFrameHandle(LoadGraph("./img/UI/Always/HpFrame.png")),	//フレーム
 	//勝利数
-	m_winRoundP1Handle = LoadGraph("./img/UI/Always/1PWinNumIcon.png");
-	m_winRoundP2Handle = LoadGraph("./img/UI/Always/2PWinNumIcon.png");
+	m_winRoundP1Handle(LoadGraph("./img/UI/Always/1PWinNumIcon.png")),
+	m_winRoundP2Handle(LoadGraph("./img/UI/Always/2PWinNumIcon.png")),
+	m_onesPlaceHandle(0),
+	m_tensPlaceHandle(0)
+{
 	int noWinRoundHandle = LoadGraph("./img/UI/Always/WinNullIcon.png");
 	m_winRound1P1Handle = noWinRoundHandle;
 	m_winRound1P2Handle = noWinRoundHandle;
