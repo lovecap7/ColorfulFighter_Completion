@@ -2,7 +2,7 @@
 #include "Input.h"
 #include "Player.h"
 #include "Bullet.h"
-#include "Sound/SE.h"
+#include "SE.h"
 #include <cassert>
 namespace
 {

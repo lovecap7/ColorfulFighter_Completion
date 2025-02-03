@@ -825,8 +825,6 @@ CommandSelectScene::CommandSelectScene(SceneController& controller) :
 	m_backGroundHandle(LoadGraph("img/CharacterSelect/CommandSelectBack.png")),
 	//テキスト
 	m_selectTextHandle(LoadGraph("img/CharacterSelect/SelectText.png")),
-	//ローディング画面
-	m_loadingHandle(LoadGraph("./img/Loading/NowLoading.png")),
 	//色
 	m_currentColorIndexP1(0),
 	m_currentColorIndexP2(0),
@@ -1056,11 +1054,6 @@ void CommandSelectScene::Draw()
 
 	//フェードイン
 	m_fadeManager->DrawWhiteFade(m_isFadeIn);
-	//フェードインしきってから表示
-	if (m_fadeManager->IsFinishFadeIn())
-	{
-		DxLib::DrawGraph(0, 0, m_loadingHandle, true);
-	}
 
 #if _DEBUG	
 	DxLib::DrawString(10, 10, "CharacterselectScene", 0xffffff);
@@ -1071,6 +1064,7 @@ void CommandSelectScene::Draw()
 		DrawFormatString(400, 750, 0xff3333, "currentColorIndexP1 = %d", m_currentColorIndexP1);
 		DrawFormatString(1000, 750, 0x0000ff, "currentColorIndexP2 = %d", m_currentColorIndexP2);
 	}
+	//DrawFormatString(10, 20, 0xffffff, "処理数%d", GetASyncLoadNum());
 #endif
 
 }

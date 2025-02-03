@@ -147,6 +147,9 @@ GameScene::GameScene(SceneController& controller):
 	m_backColorHandle{},
 	m_floorColorHandle{}
 {
+	//非同期で読み込み
+	SetUseASyncLoadFlag(true);
+
 	bool isSameColor = false;
 	//プレイヤーのカラーが同じかどうかをチェック
 	if (m_controller.GetCharaColorIndexP1() == m_controller.GetCharaColorIndexP2())
@@ -165,7 +168,7 @@ GameScene::GameScene(SceneController& controller):
 	m_bullet2 = std::make_shared<Bullet>(PlayerIndex::Player2);
 	//ステージ
 	m_floorBaseHandle = LoadGraph("./img/stage/floor/NewBase.png");//床
-	m_backBaseHandle = LoadGraph("./img/stage/back/NewBase.png");;//背景
+	m_backBaseHandle = LoadGraph("./img/stage/back/NewBase.png");//背景
 	//8色に光らせる準備
 	CreateColorHandle();
 	//カメラ
@@ -182,6 +185,7 @@ GameScene::GameScene(SceneController& controller):
 
 void GameScene::Update(Input& input, Input& input2)
 {
+
 #if _DEBUG
 	if (input.IsTrigger("Select"))
 	{
@@ -256,9 +260,9 @@ void GameScene::Draw()
 	m_ui->DrawFront();
 	//フェードインアウト
 	m_gameManager->Draw(*m_camera);
-
 #if _DEBUG	
 	DrawString(10, 10, "GameScene", 0xffffff);
+	DrawFormatString(10, 20, 0xffffff, "処理数%d", GetASyncLoadNum());
 	DrawCircleAA(m_camera->m_drawOffset.x, m_camera->m_drawOffset.y, 50, 0xff0000, true);
 	DrawCircleAA(m_camera->m_pos.x, m_camera->m_pos.y, 40, 0xff0000, true);
 #endif

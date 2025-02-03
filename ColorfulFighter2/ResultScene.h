@@ -75,8 +75,6 @@ private:
     //フェードインするために使う
     std::shared_ptr<FadeManager> m_fadeManager;
     bool m_isFadeIn;
-    //Loading中の画像
-    int m_loadingHandle;
 public:
     ResultScene(SceneController& controller);
     //派生クラスで実装を実装

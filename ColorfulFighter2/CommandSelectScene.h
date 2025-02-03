@@ -39,8 +39,6 @@ private:
     int m_selectTextHandle;
     //操作に関するUI(下に出てるやつ)
     int m_operationHandle;
-    //Loading中の画像
-    int m_loadingHandle;
     //アニメーション関連
     //キャラクターアニメーション
     int m_animIndexP1;

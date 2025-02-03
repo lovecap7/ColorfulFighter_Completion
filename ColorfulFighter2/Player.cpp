@@ -5,7 +5,7 @@
 #include "GameManager.h"
 #include <cassert>
 #include "Bullet.h"
-#include "Sound/SE.h"
+#include "SE.h"
 
 namespace
 {

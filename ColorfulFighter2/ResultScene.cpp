@@ -65,8 +65,6 @@ ResultScene::ResultScene(SceneController& controller) :
 	m_isFadeIn(false),
 	m_selectMenuIndexP1(0),
 	m_selectMenuIndexP2(0),
-	//ローディング画面
-	m_loadingHandle(LoadGraph("./img/Loading/NowLoading.png")),
 	m_rematchBottunHandle(LoadGraph("./img/Menu/Rematch.png")),
 	m_reselectBottunHandle(LoadGraph("./img/Menu/CommandSelect.png")),
 	m_p1ColorHandle(LoadGraph("./img/Menu/BlendP1.png")),
@@ -564,10 +562,5 @@ void ResultScene::Draw()
 
 	//フェード
 	m_fadeManager->DrawBlackFade(m_isFadeIn);
-	//なうろーでぃんぐ
-	if (m_fadeManager->IsFinishFadeIn())
-	{
-		DxLib::DrawGraph(0, 0, m_loadingHandle, true);
-	}
 }
 
