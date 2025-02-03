@@ -1,9 +1,10 @@
 #include "Application.h"
-#include "Dxlib.h"
+#include <DxLib.h>
 #include <cassert>
 #include "game.h"
 #include "SceneController.h"
 #include "Input.h"
+#include "Loading.h"
 #include <memory>
 #include "resource.h"
 
@@ -53,6 +54,8 @@ void Application::Run()
 	Input input2;
 	input2.Init();
 	input2.PadInit(2);
+	//ロード画面
+	Loading loading;
 
 	//ゲームループ
 	while (ProcessMessage() == 0) // Windowsが行う処理を待つ
@@ -68,6 +71,8 @@ void Application::Run()
 		input2.Update();
 		sceneController.Update(input,input2);
 		sceneController.Draw();
+		loading.Update();
+		loading.Draw();
 
 		//画面の切り替わりを待つ必要がある
 		ScreenFlip();//1/60秒経過するまで待つ
@@ -84,3 +89,4 @@ void Application::Terminate()
 {
 	DxLib_End();				// ＤＸライブラリ使用の終了処理
 }
+

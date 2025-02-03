@@ -1015,7 +1015,6 @@ void CommandSelectScene::Update(Input& input, Input& input2)
 		//色
 		m_controller.SaveCharaColorIndexP1(static_cast<CharaColorIndex>(m_currentColorIndexP1));
 		m_controller.SaveCharaColorIndexP2(static_cast<CharaColorIndex>(m_currentColorIndexP2));
-
 		//押されたら次の状態に繊維
 		//次の状態はこのクラスが覚えておく
 		m_controller.ChangeScene(std::make_shared<GameScene>(m_controller));

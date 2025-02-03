@@ -145,6 +145,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionCheck.cpp" />
     <ClCompile Include="FadeManager.cpp" />
+    <ClCompile Include="Loading.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Chara.cpp" />
     <ClCompile Include="CommandSelectScene.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionCheck.h" />
     <ClInclude Include="FadeManager.h" />
+    <ClInclude Include="Loading.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Chara.h" />
     <ClInclude Include="CommandSelectScene.h" />

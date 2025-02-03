@@ -99,6 +99,9 @@
     <ClCompile Include="Chara.cpp">
       <Filter>Scenes\CommandSelectScene</Filter>
     </ClCompile>
+    <ClCompile Include="Loading.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneBase.h">
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Loading.h">
+      <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
