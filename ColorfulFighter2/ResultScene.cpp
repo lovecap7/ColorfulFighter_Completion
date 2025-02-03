@@ -24,7 +24,7 @@ namespace
 	//メニュー数
 	constexpr int kMenuNum = 2;
 	//BGMボリューム
-	constexpr int kBgmVolume = 120;
+	constexpr int kBgmVolume = 150;
 	//SEボリューム
 	constexpr int kSeVolume = 150;
 

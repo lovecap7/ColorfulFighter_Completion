@@ -5,6 +5,9 @@ class UI
 {
 private:
 	//描画
+	//プレイヤーアイコン
+	int m_p1IconHandle;
+	int m_p2IconHandle;
 	//Hpバー
 	float m_hpbarMaxP1;// 現在の体力/最大値　でHPの大きさを表示する際に使う(割合)
 	float m_hpbarMaxP2;
@@ -93,6 +96,8 @@ private:
 	int m_sprite3Handle;
 	int m_spriteAlpha;
 	Vector3 m_spriteVelo;
+	//プレイヤーアイコン
+	void DrawPlayerIcon();
 	//ダメージ
 	void UpdateDamage();
 	//KOした時の演出

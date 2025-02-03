@@ -195,6 +195,12 @@ void UI::InitKoSpriteEffect()
 	m_spriteVelo.y = 0;
 }
 
+void UI::DrawPlayerIcon()
+{
+	//HPバーの横に描画
+	DrawGraph(100, kHpPosY, m_p1IconHandle, true);
+}
+
 void UI::UpdateDamage()
 {
 	//HPが変化したらカウント開始
@@ -489,6 +495,8 @@ void UI::DrawKoSprite()
 }
 
 UI::UI(int* selectCommandIndexP1, int* selectCommandIndexP2) :
+	m_p1IconHandle(LoadGraph("./img/UI/PlayerIcon/P1Icon.png")),
+	m_p2IconHandle(LoadGraph("./img/UI/PlayerIcon/P2Icon.png")),
 	m_hpbarP1(0.0f),
 	m_hpbarMaxP1(0.0f),
 	m_hpbarP2(0.0f),
@@ -694,6 +702,8 @@ void UI::DrawBack()
 	DrawFinishUI();
 	//Hpバー
 	DrawHpbar();
+	//プレイヤーアイコン
+	DrawPlayerIcon();
 	//タイマー
 	DrawTimer();
 	//所持しているコマンド技の表示
