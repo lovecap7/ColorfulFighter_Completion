@@ -124,12 +124,12 @@ void TitleScene::UpdateNormal(Input& input, Input& input2)
 	//攻撃しているほうのアニメーションに合わせてガードする
 	if (m_actor1.handle != m_guardHandle)
 	{
-		attackOneAnimFrame = m_actor1.oneAnimFrame;
+		attackOneAnimFrame = m_actor1.oneAnimIntervalFrame;
 		attackAnimNum = m_actor1.animNum;
 	}
 	if (m_actor2.handle != m_guardHandle)
 	{
-		attackOneAnimFrame = m_actor2.oneAnimFrame;
+		attackOneAnimFrame = m_actor2.oneAnimIntervalFrame;
 		attackAnimNum = m_actor2.animNum;
 	}
 	int animMaxNum = attackAnimNum - 1;
@@ -178,9 +178,9 @@ void TitleScene::UpdateNormal(Input& input, Input& input2)
 			int tmpHandle = m_actor1.handle;
 			m_actor1.handle = m_actor2.handle;
 			m_actor2.handle = tmpHandle;
-			int tmpOneAnimFrame = m_actor1.oneAnimFrame;
-			m_actor1.oneAnimFrame = m_actor2.oneAnimFrame;
-			m_actor2.oneAnimFrame = tmpOneAnimFrame;
+			int tmpOneAnimFrame = m_actor1.oneAnimIntervalFrame;
+			m_actor1.oneAnimIntervalFrame = m_actor2.oneAnimIntervalFrame;
+			m_actor2.oneAnimIntervalFrame = tmpOneAnimFrame;
 		}
 	}
 	//タイトルがだんだんはっきりしてくる
@@ -248,9 +248,9 @@ void TitleScene::UpdateOpening(Input& input, Input& input2)
 		m_actor1.animIndex = 0;
 		m_actor2.animIndex = 0;
 		m_actor1.handle = m_guardHandle;
-		m_actor1.oneAnimFrame = kDefenceOneAnimFrame;
+		m_actor1.oneAnimIntervalFrame = kDefenceOneAnimFrame;
 		m_actor2.handle = m_punchHandle;
-		m_actor2.oneAnimFrame = kAttackOneAnimFrame;
+		m_actor2.oneAnimIntervalFrame = kAttackOneAnimFrame;
 		m_update = &TitleScene::UpdateNormal;
 		m_draw = &TitleScene::DrawNormal;
 		return;
@@ -296,9 +296,9 @@ void TitleScene::UpdateOpening(Input& input, Input& input2)
 			if (m_actor1.handle == m_idleHandle && m_actor2.handle == m_idleHandle)
 			{
 				m_actor1.handle = m_guardHandle;
-				m_actor1.oneAnimFrame = kDefenceOneAnimFrame;
+				m_actor1.oneAnimIntervalFrame = kDefenceOneAnimFrame;
 				m_actor2.handle = m_punchHandle;
-				m_actor2.oneAnimFrame = kAttackOneAnimFrame;
+				m_actor2.oneAnimIntervalFrame = kAttackOneAnimFrame;
 				m_update = &TitleScene::UpdateNormal;
 				m_draw = &TitleScene::DrawNormal;
 				return;
@@ -348,10 +348,10 @@ void TitleScene::UpdateDemo(Input& input, Input& input2)
 		m_actor2Velo = Vector3(0, 0, 0);
 		m_actor1.handle = m_walkHandle;
 		m_actor1.animNum = kAnimNum;
-		m_actor1.oneAnimFrame = kIWalkOneAnimFrame;
+		m_actor1.oneAnimIntervalFrame = kIWalkOneAnimFrame;
 		m_actor2.handle = m_walkHandle;
 		m_actor2.animNum = kAnimNum;
-		m_actor2.oneAnimFrame = kIWalkOneAnimFrame;
+		m_actor2.oneAnimIntervalFrame = kIWalkOneAnimFrame;
 		m_titleFadeCountFrame = 0;
 		m_update = &TitleScene::UpdateOpening;
 		m_draw = &TitleScene::DrawOpening;

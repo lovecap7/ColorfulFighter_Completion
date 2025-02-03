@@ -18,17 +18,17 @@ private:
         int handle;
         int animIndex;	//アニメーションの番号を数える(1増える毎にアニメーションが進む)
         int animNum;		//アニメーションの数
-        int oneAnimFrame;	//1枚のアニメーションにかかるフレーム
+        int oneAnimIntervalFrame;	//1枚のアニメーションにかかるフレーム
         /// <summary>
         /// 初期化
         /// </summary>
         /// <param name="handle">ハンドル</param>
         /// <param name="animNum">絵の枚数</param>
-        Actor(int Handle, int AnimNum, int OneAnimFrame) :
+        Actor(int Handle, int AnimNum, int OneAnimIntervalFrame) :
             handle(Handle),
             animIndex(0),
             animNum(AnimNum),
-            oneAnimFrame(OneAnimFrame)
+            oneAnimIntervalFrame(OneAnimIntervalFrame)
         {
         }
     };
