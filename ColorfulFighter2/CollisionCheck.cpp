@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "GameManager.h"
 #include "game.h"
-#include "SE.h"
+#include "Sound/SE.h"
 #include <DxLib.h>
 
 namespace

@@ -2,7 +2,7 @@
 #include "Dxlib.h"
 #include <cassert>
 #include "game.h"
-#include "SceneController.h"
+#include "Scenes/SceneController.h"
 #include "Input.h"
 #include <memory>
 #include "resource.h"

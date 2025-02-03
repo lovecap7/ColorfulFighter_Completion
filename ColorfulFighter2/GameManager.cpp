@@ -5,7 +5,7 @@
 #include "UI.h"
 #include "FadeManager.h"
 #include "game.h"
-#include "SE.h"
+#include "Sound/SE.h"
 #include <cmath>
 #include <DxLib.h>
 
