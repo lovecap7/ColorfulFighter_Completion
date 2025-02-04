@@ -476,7 +476,7 @@ FodyWeavers.xsd
 *.sln.iml
 
 #画像、音声、動画の変更を除外
-
+*.png
 *.jpg
 *.mp3
 *.mp4
