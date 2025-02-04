@@ -23,6 +23,8 @@ namespace
 	constexpr int kCharaPosXP1 = 200;
 	constexpr int kCharaPosXP2 = Game::kScreenWidth - 200;
 	constexpr int kCharaPosY = 250;
+	//カラバリの数
+	constexpr int kCharaColorNum = 5;
 
 	//アニメーション
 	constexpr int kAnimNum = 5;//待機状態と準備完了のアニメーションの数を同じにする
@@ -163,13 +165,13 @@ void CommandSelectScene::SelectCommandP1(Input& input)
 				m_seP1->Volume(kSeVolume);
 				m_seP1->PlayOnce();
 				m_isSelectFinishP1 = false;
-				for (int i = 0; i < 3; ++i)
+				for (int i = 0; i < kSelectCommandNum - 1; ++i)
 				{
 					//最後に選んだ順に消す
-					if (m_selectCommandIndexP1[2 - i] != 0)
+					if (m_selectCommandIndexP1[(kSelectCommandNum - 1) - i] != 0)
 					{
-						m_selectCommandIndexP1[2 - i] = 0;
-						m_selectCommandIconP1Handle[2 - i] = m_nullCommandIconHandle;
+						m_selectCommandIndexP1[(kSelectCommandNum - 1) - i] = 0;
+						m_selectCommandIconP1Handle[(kSelectCommandNum - 1) - i] = m_nullCommandIconHandle;
 						break;
 					}
 				}
@@ -244,7 +246,7 @@ void CommandSelectScene::SelectCommandP1(Input& input)
 			m_seP1->SetSE(m_selectSeHandle);
 			m_seP1->Volume(kOkSeVolume);
 			m_seP1->PlayOnce();
-			for (int i = 0; i < 3; ++i)
+			for (int i = 0; i < kSelectCommandNum; ++i)
 			{
 				//同じ技は選べない
 				if (m_selectCommandIndexP1[i] == m_currentSelectCommandIndexP1)
@@ -260,7 +262,7 @@ void CommandSelectScene::SelectCommandP1(Input& input)
 				}
 			}
 			//3つ選んだらカーソルを動かせなくする
-			if (m_selectCommandIndexP1[2] != 0)
+			if (m_selectCommandIndexP1[(kSelectCommandNum - 1)] != 0)
 			{
 				m_isSelectFinishP1 = true;
 			}
@@ -274,13 +276,13 @@ void CommandSelectScene::SelectCommandP1(Input& input)
 			m_seP1->Volume(kSeVolume);
 			m_seP1->PlayOnce();
 			m_isSelectFinishP1 = false;
-			for (int i = 0; i < 3; ++i)
+			for (int i = 0; i < kSelectCommandNum; ++i)
 			{
 				//最後に選んだ順に消す
-				if (m_selectCommandIndexP1[2 - i] != 0)
+				if (m_selectCommandIndexP1[(kSelectCommandNum - 1) - i] != 0)
 				{
-					m_selectCommandIndexP1[2 - i] = 0;
-					m_selectCommandIconP1Handle[2 - i] = m_nullCommandIconHandle;
+					m_selectCommandIndexP1[(kSelectCommandNum - 1) - i] = 0;
+					m_selectCommandIconP1Handle[(kSelectCommandNum - 1) - i] = m_nullCommandIconHandle;
 					break;
 				}
 			}
@@ -346,10 +348,10 @@ void CommandSelectScene::SelectCommandP2(Input& input)
 				//最後に選んだ順に消す
 				for (int i = 0; i < 3; ++i)
 				{
-					if (m_selectCommandIndexP2[2 - i] != 0)
+					if (m_selectCommandIndexP2[(kSelectCommandNum - 1) - i] != 0)
 					{
-						m_selectCommandIndexP2[2 - i] = 0;
-						m_selectCommandIconP2Handle[2 - i] = m_nullCommandIconHandle;
+						m_selectCommandIndexP2[(kSelectCommandNum - 1) - i] = 0;
+						m_selectCommandIconP2Handle[(kSelectCommandNum - 1) - i] = m_nullCommandIconHandle;
 						break;
 					}
 				}
@@ -438,7 +440,7 @@ void CommandSelectScene::SelectCommandP2(Input& input)
 					break;
 				}
 			}
-			if (m_selectCommandIndexP2[2] != 0)
+			if (m_selectCommandIndexP2[(kSelectCommandNum - 1)] != 0)
 			{
 				m_isSelectFinishP2 = true;
 			}
@@ -453,12 +455,12 @@ void CommandSelectScene::SelectCommandP2(Input& input)
 			m_seP2->PlayOnce();
 			m_isSelectFinishP2 = false;
 			//最後に選んだ順に消す
-			for (int i = 0; i < 3; ++i)
+			for (int i = 0; i < kSelectCommandNum; ++i)
 			{
-				if (m_selectCommandIndexP2[2 - i] != 0)
+				if (m_selectCommandIndexP2[(kSelectCommandNum - 1) - i] != 0)
 				{
-					m_selectCommandIndexP2[2 - i] = 0;
-					m_selectCommandIconP2Handle[2 - i] = m_nullCommandIconHandle;
+					m_selectCommandIndexP2[(kSelectCommandNum - 1) - i] = 0;
+					m_selectCommandIconP2Handle[(kSelectCommandNum - 1) - i] = m_nullCommandIconHandle;
 					break;
 				}
 			}
@@ -503,7 +505,7 @@ void CommandSelectScene::SelectColorP1(Input& input)
 			m_seP1->PlayOnce();
 			m_currentColorIndexP1++;
 		}
-		if (m_currentColorIndexP1 > 4)
+		if (m_currentColorIndexP1 > (kCharaColorNum - 1))
 		{
 			m_currentColorIndexP1 = 0;
 		}
@@ -528,7 +530,7 @@ void CommandSelectScene::SelectColorP2(Input& input2)
 			m_seP2->PlayOnce();
 			m_currentColorIndexP2++;
 		}
-		if (m_currentColorIndexP2 > 4)
+		if (m_currentColorIndexP2 > (kCharaColorNum - 1))
 		{
 			m_currentColorIndexP2 = 0;
 		}
@@ -755,7 +757,7 @@ void CommandSelectScene::DrawSelectText()
 void CommandSelectScene::DrawSelectPlayerCommandIcon()
 {
 	//コマンド
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < kSelectCommandNum; ++i)
 	{
 		//選んだ技のアイコン
 		DrawRectRotaGraphFast(
@@ -844,7 +846,11 @@ CommandSelectScene::CommandSelectScene(SceneController& controller) :
 	m_charaP2Handle(-1),
 	m_commandIconHandle{},
 	m_idlePoseHandle{},
-	m_readyPoseHandle{}
+	m_readyPoseHandle{},
+	m_gettingReadyHandle(LoadGraph("./img/CharacterSelect/Ready_Off.png")),//準備中
+	m_readyHandle(LoadGraph("./img/CharacterSelect/Ready_On.png")),//準備完了
+	m_currentReadyP1Handle(m_gettingReadyHandle),//準備完了かどうかを表示
+	m_currentReadyP2Handle(m_gettingReadyHandle)
 {
 	//BGM
 	m_bgm = std::make_shared<BGM>();
@@ -856,7 +862,7 @@ CommandSelectScene::CommandSelectScene(SceneController& controller) :
 	m_seP1 = std::make_shared<SE>();
 	m_seP2 = std::make_shared<SE>();
 
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < kCharaColorNum; ++i)
 	{
 		switch (i)
 		{
@@ -930,13 +936,23 @@ CommandSelectScene::CommandSelectScene(SceneController& controller) :
 		m_selectCommandIconP1Handle[i] = m_nullCommandIconHandle;
 		m_selectCommandIconP2Handle[i] = m_nullCommandIconHandle;
 	}
-	m_gettingReadyHandle = LoadGraph("./img/CharacterSelect/Ready_Off.png");//準備中
-	m_readyHandle = LoadGraph("./img/CharacterSelect/Ready_On.png");//準備完了
-	m_currentReadyP1Handle = m_gettingReadyHandle;//準備完了かどうかを表示
-	m_currentReadyP2Handle = m_gettingReadyHandle;
-
 	//フェードインするときに使う
 	m_fadeManager = std::make_shared<FadeManager>();
+}
+
+CommandSelectScene::~CommandSelectScene()
+{
+	//コマンド技のアイコン
+	for (int i = 0; i < kCommandNum; ++i)
+	{
+		DeleteGraph(m_commandIconHandle[i]);
+	}
+	//選んだコマンド技のアイコン
+	for (int i = 0; i < kSelectCommandNum; ++i)
+	{
+		DeleteGraph(m_selectCommandIconP1Handle[i]);
+		DeleteGraph(m_selectCommandIconP2Handle[i]);
+	}
 }
 
 void CommandSelectScene::Update(Input& input, Input& input2)

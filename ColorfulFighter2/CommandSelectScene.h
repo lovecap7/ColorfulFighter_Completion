@@ -104,6 +104,7 @@ private:
     void UpdateBlink();
 public:
     CommandSelectScene(SceneController& controller);
+    ~CommandSelectScene();
     //”h¶ƒNƒ‰ƒX‚ÅÀ‘•‚ğÀ‘•
     virtual void Update(Input& input, Input& input2) override;
     virtual void Draw() override;

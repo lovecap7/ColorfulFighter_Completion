@@ -81,6 +81,7 @@ private:
     void DrawGameStart();
 public:
     TitleScene(SceneController& contoller);
+    ~TitleScene();
     /// <summary>
     /// ”h¶ƒNƒ‰ƒX‚ÅÀ‘•‚ğÀ‘•
     /// virtual ‚Í‚±‚ê‚ğŒp³‚·‚é‚©‚à‚µ‚ê‚È‚¢‚©‚ç

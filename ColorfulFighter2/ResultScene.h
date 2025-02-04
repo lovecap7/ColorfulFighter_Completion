@@ -77,6 +77,7 @@ private:
     bool m_isFadeIn;
 public:
     ResultScene(SceneController& controller);
+    ~ResultScene();
     //”h¶ƒNƒ‰ƒX‚ÅÀ‘•‚ğÀ‘•
     virtual void Update(Input& input, Input& input2) override;
     virtual void Draw() override;

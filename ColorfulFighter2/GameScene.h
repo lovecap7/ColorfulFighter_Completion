@@ -40,6 +40,7 @@ private:
     int m_colorIndex;
 public:
     GameScene(SceneController& controller);
+    ~GameScene();
     /// <summary>
     /// ”h¶ƒNƒ‰ƒX‚ÅÀ‘•‚ğÀ‘•
     /// </summary>

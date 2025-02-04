@@ -212,8 +212,21 @@ ResultScene::ResultScene(SceneController& controller) :
 	m_fadeManager = std::make_shared<FadeManager>();
 }
 
-
-
+ResultScene::~ResultScene()
+{
+	//‰ð•ú
+	DeleteGraph(m_rematchBottunHandle);
+	DeleteGraph(m_reselectBottunHandle);
+	DeleteGraph(m_p1ColorHandle);
+	DeleteGraph(m_p2ColorHandle);
+	DeleteGraph(m_serifHandle);
+	DeleteGraph(m_selectSeHandle);
+	DeleteGraph(m_cursorMoveSehandle);
+	DeleteGraph(m_backGroundHandle);
+	DeleteGraph(m_p1Handle);
+	DeleteGraph(m_p2Handle);
+	DeleteGraph(m_menuBgm);
+}
 
 void ResultScene::SelectMenu(Input& input,int& selectMenuIndex,bool& isDecide, std::shared_ptr<SE>& se)
 {

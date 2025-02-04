@@ -144,8 +144,11 @@ GameScene::GameScene(SceneController& controller):
 	m_color(0x000000),
 	m_colorAlphaCountFrame(0),
 	m_colorIndex(0),
+	//ステージ
 	m_backColorHandle{},
-	m_floorColorHandle{}
+	m_floorColorHandle{},
+	m_backBaseHandle(LoadGraph("./img/stage/back/NewBase.png")),//背景
+	m_floorBaseHandle(LoadGraph("./img/stage/floor/NewBase.png"))//床
 {
 	bool isSameColor = false;
 	//プレイヤーのカラーが同じかどうかをチェック
@@ -163,9 +166,6 @@ GameScene::GameScene(SceneController& controller):
 	//弾
 	m_bullet1 = std::make_shared<Bullet>(PlayerIndex::Player1);
 	m_bullet2 = std::make_shared<Bullet>(PlayerIndex::Player2);
-	//ステージ
-	m_floorBaseHandle = LoadGraph("./img/stage/floor/NewBase.png");//床
-	m_backBaseHandle = LoadGraph("./img/stage/back/NewBase.png");//背景
 	//8色に光らせる準備
 	CreateColorHandle();
 	//カメラ
@@ -178,6 +178,17 @@ GameScene::GameScene(SceneController& controller):
 	m_bgm->PlayLoop();
 	//初期化
 	GameInit();
+}
+
+GameScene::~GameScene()
+{
+	for (int i = 0; i < kColorNum; ++i)
+	{
+		DeleteGraph(m_backColorHandle[i]);
+		DeleteGraph(m_floorColorHandle[i]);
+	}
+	DeleteGraph(m_backBaseHandle);
+	DeleteGraph(m_floorBaseHandle);
 }
 
 void GameScene::Update(Input& input, Input& input2)

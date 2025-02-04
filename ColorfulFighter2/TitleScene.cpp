@@ -468,6 +468,23 @@ TitleScene::TitleScene(SceneController& contoller) :
 	m_isFadeIn = false;
 }
 
+TitleScene::~TitleScene()
+{
+	//解放
+	DeleteGraph(m_backgroundHandle);
+	DeleteGraph(m_titleHandle);
+	DeleteGraph(m_textHandle);
+	DeleteGraph(m_idleHandle);
+	DeleteGraph(m_punchHandle);
+	DeleteGraph(m_kickHandle);
+	DeleteGraph(m_guardHandle);
+	DeleteGraph(m_walkHandle);
+	DeleteGraph(m_startSeHandle);
+	DeleteGraph(m_demoMovieHandle);
+	DeleteGraph(m_actor1.handle);
+	DeleteGraph(m_actor2.handle);
+}
+
 void TitleScene::Update(Input& input, Input& input2)
 {
 	//キャラクターのアニメーションは常にさせる
