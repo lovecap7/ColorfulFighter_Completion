@@ -16,10 +16,15 @@ namespace
 	constexpr float kActor3WalkSpeed = 10.0f;
 	constexpr float kActor4WalkSpeed = 7.0f;
 	constexpr float kActor5WalkSpeed = 5.0f;
+
+	//NowLoadingの文字の位置
+	constexpr int kNowLoadingPosX = 1000;
+	constexpr int kNowLoadingPosY = 800;
 }
 
 Loading::Loading() :
 	m_loadingHandle(LoadGraph("./img/Loading/NowLoading.png")),
+	m_backgroundHandle(LoadGraph("./img/title/TitleBack.png")),
 	m_animCountFrame(0),
 	m_actor1{-1,kWalkAnimNum,kWalkOneAnimIntervalFrame },
 	m_actor2{-1,kWalkAnimNum,kWalkOneAnimIntervalFrame },
@@ -33,7 +38,7 @@ Loading::Loading() :
 	m_actor5Pos(0.0f, Game::kScreenHeight / 2,0)
 {
 	//非同期で読み込み
-	SetUseASyncLoadFlag(true);
+	//SetUseASyncLoadFlag(true);
 	m_actor1.handle = LoadGraph("./img/Chara/White/playerbase/walk_front_001.png");
 	m_actor2.handle = LoadGraph("./img/Chara/Red/playerbase/walk_front_001.png");
 	m_actor3.handle = LoadGraph("./img/Chara/Blue/playerbase/walk_front_001.png");
@@ -110,9 +115,11 @@ void Loading::Draw()
 #endif
 	if (GetASyncLoadNum() > 0)
 	{
-		SetDrawBright(200, 200, 200);
-		DrawGraph(0, 0, m_loadingHandle, false);
+		//少しだけ暗くする
+		SetDrawBright(150, 150, 150);
+		DrawGraph(0, 0, m_backgroundHandle, false);
 		SetDrawBright(255, 255, 255);
+		DrawGraph(kNowLoadingPosX, kNowLoadingPosY, m_loadingHandle, true);
 		//切り取るを計算する
 		int sizeX, sizeY;
 		GetGraphSize(m_actor1.handle, &sizeX, &sizeY);//画像サイズ

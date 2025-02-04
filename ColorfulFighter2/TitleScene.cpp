@@ -431,7 +431,7 @@ void TitleScene::DrawActor()
 
 TitleScene::TitleScene(SceneController& contoller) :
 	SceneBase(contoller),
-	m_backHandle(LoadGraph("./img/title/TitleBack.png")),
+	m_backgroundHandle(LoadGraph("./img/title/TitleBack.png")),
 	m_titleHandle(LoadGraph("./img/title/Title.png")),
 	m_titleFadeCountFrame(0),
 	m_textHandle(LoadGraph("./img/title/PressAnyButton.png")),
@@ -478,6 +478,6 @@ void TitleScene::Update(Input& input, Input& input2)
 void TitleScene::Draw()
 {
 	//”wŒi‚Íí‚É•`‰æ
-	DrawGraph(0, 0, m_backHandle, true);
+	DrawGraph(0, 0, m_backgroundHandle, true);
 	(this->*m_draw)();
 }

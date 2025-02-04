@@ -4,6 +4,7 @@ class Loading
 {
 private:
 	int m_loadingHandle;
+    int m_backgroundHandle;
     struct Actor//í‚Á‚Ä‚él‚½‚¿‚Ì•`‰æ‚Ég‚¤
     {
         int handle;

@@ -10,7 +10,7 @@ class TitleScene :
 {
 private:
     //•`‰æŠÖ˜A
-    int m_backHandle;//”wŒi
+    int m_backgroundHandle;//”wŒi
 	int m_titleHandle;
     int m_textHandle;//press any bottun
     struct Actor//í‚Á‚Ä‚él‚½‚¿‚Ì•`‰æ‚Ég‚¤

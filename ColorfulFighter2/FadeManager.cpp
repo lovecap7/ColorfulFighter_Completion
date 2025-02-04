@@ -27,7 +27,7 @@ void FadeManager::DrawBlackFade(bool isFadeIn)
 	{
 		m_fadeFrameCount += kFadeSpeed;
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_fadeFrameCount);
-		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
+		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x111111, true);
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 	//フェードアウト
@@ -35,7 +35,7 @@ void FadeManager::DrawBlackFade(bool isFadeIn)
 	{
 		m_fadeFrameCount -= kFadeSpeed;
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_fadeFrameCount);
-		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
+		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x111111, true);
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
