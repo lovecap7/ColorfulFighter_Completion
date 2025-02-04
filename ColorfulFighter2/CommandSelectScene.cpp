@@ -62,7 +62,7 @@ namespace
 	constexpr int kOkSeVolume = 180;
 
 	//点滅のスパン
-	constexpr int kBlinkSpan = 20;
+	constexpr int kBlinkSpan = 50;
 
 	//コマンドの設定
 	constexpr int kCommandInfoPosXP1 = kCenterX - 500;
@@ -746,14 +746,10 @@ void CommandSelectScene::DrawSelectText()
 	if (m_blinkCountFrame <= kBlinkSpan)
 	{
 		//カーソルちかちか
-		DxLib::SetDrawBright(0, 0, 0);
-	}
-	else
-	{
-		DxLib::SetDrawBright(200, 200, 200);
+		SetDrawBlendMode(DX_BLENDMODE_INVSRC, 255);
 	}
 	DrawRotaGraph(kCenterX, 100, 1.0, 0, m_selectTextHandle, true, 0, 0);
-	SetDrawBright(255, 255, 255);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
 void CommandSelectScene::DrawSelectPlayerCommandIcon()
