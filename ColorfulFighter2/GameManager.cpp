@@ -58,7 +58,7 @@ GameManager::GameManager():
 	m_winNumP1(0),
 	m_winNumP2(0),
 	m_roundNumber(1),
-	m_isFadeIn(false),
+	m_isFadeOut(false),
 	m_time(kRoundTime),
 	m_countFrame(0),
 	m_isDrawFrontP1(false),
@@ -101,6 +101,21 @@ GameManager::GameManager():
 
 GameManager::~GameManager()
 {
+	//エフェクト
+	DeleteGraph(m_redEffectHandle);
+	DeleteGraph(m_purpleEffectHandle);
+	DeleteGraph(m_greenEffectHandle);
+	DeleteGraph(m_blueHandle);
+	DeleteGraph(m_hitEffectHandleP1);
+	DeleteGraph(m_hitEffectHandleP2);
+	//SE
+	DeleteGraph(m_round1SeHandle);
+	DeleteGraph(m_round2SeHandle);
+	DeleteGraph(m_round3SeHandle);
+	DeleteGraph(m_roundOverSeHandle);
+	DeleteGraph(m_fightSeHandle);
+	DeleteGraph(m_koSeHandle);
+	DeleteGraph(m_timeUpSeHandle);
 }
 
 void GameManager::Init()
@@ -114,7 +129,7 @@ void GameManager::Init()
 	m_isStartRound = false;
 	m_isCameraShake = false;
 	//フェードアウト
-	m_isFadeIn = false;
+	m_isFadeOut = false;
 	//タイマー
 	m_time = kRoundTime;
 	m_countFrame = 0;
@@ -159,8 +174,8 @@ void GameManager::NoStopUpdate(Player& p1, Player& p2)
 		Timer();
 	}
 
-	//フェードアウトしたらゲーム開始の準備
-	if (m_fadeManager->IsFinishFadeOut())
+	//フェードインしたらゲーム開始の準備
+	if (m_fadeManager->IsFinishFadeIn())
 	{
 		//ゲーム開始時
 		m_startRoundCount++;
@@ -245,7 +260,7 @@ void GameManager::Draw(Camera& camera)
 void GameManager::DrawFade()
 {
 	//フェードインアウト
-	m_fadeManager->DrawBlackFade(m_isFadeIn);
+	m_fadeManager->DrawBlackFade(m_isFadeOut);
 }
 
 void GameManager::DrawHitEffect(Camera& camera)
@@ -424,8 +439,6 @@ PlayerIndex GameManager::ResultWinPlayerIndex()
 	}
 }
 
-
-
 //試合時間
 void GameManager::Timer()
 {
@@ -447,9 +460,9 @@ void GameManager::CheckKO(Player& p1, Player& p2)
 	//ラウンドをゲームシーンで切り替え
 	if (m_changeRoundFrameCount > kChangeRoundFrame && !m_isGameset)
 	{
-		//フェードインしきったらラウンドを切り替え
-		m_isFadeIn = true;
-		if (m_fadeManager->IsFinishFadeIn())
+		//フェードアウトしきったらラウンドを切り替え
+		m_isFadeOut = true;
+		if (m_fadeManager->IsFinishFadeOut())
 		{
 			//2本とったらゲーム終了
 			if (m_winNumP1 >= kGamesetWinNum)

@@ -21,7 +21,7 @@ private:
 	void CheckKO(Player& p1, Player& p2);
 	//フェード
 	std::shared_ptr<FadeManager> m_fadeManager;
-	bool m_isFadeIn;
+	bool m_isFadeOut;
 	//プレイヤーの勝利数
 	int m_winNumP1;
 	int m_winNumP2;

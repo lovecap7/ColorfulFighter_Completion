@@ -42,36 +42,36 @@ void FadeManager::DrawBlackFade(bool isFadeIn)
 	//最大値に行ったとき
 	if (m_fadeFrameCount >= kMaxAlpha)
 	{
-		m_isFinishFadeIn = true;
-		m_fadeFrameCount = kMaxAlpha;
-	}
-	else
-	{
-		m_isFinishFadeIn = false;
-	}
-	//最小値に行ったとき
-	if (m_fadeFrameCount <= 0)
-	{
 		m_isFinishFadeOut = true;
-		m_fadeFrameCount = 0;
+		m_fadeFrameCount = kMaxAlpha;
 	}
 	else
 	{
 		m_isFinishFadeOut = false;
 	}
+	//最小値に行ったとき
+	if (m_fadeFrameCount <= 0)
+	{
+		m_isFinishFadeIn = true;
+		m_fadeFrameCount = 0;
+	}
+	else
+	{
+		m_isFinishFadeIn = false;
+	}
 }
 
-void FadeManager::DrawWhiteFade(bool isFadeIn)
+void FadeManager::DrawWhiteFade(bool isFadeOut)
 {
-	//フェードイン
-	if (isFadeIn)
+	//フェードアウト
+	if (isFadeOut)
 	{
 		m_fadeFrameCount += kFadeSpeed;
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_fadeFrameCount);
 		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xeeeeee, true);
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
-	//フェードアウト
+	//フェードイン
 	else
 	{
 		m_fadeFrameCount -= kFadeSpeed;
@@ -83,22 +83,22 @@ void FadeManager::DrawWhiteFade(bool isFadeIn)
 	//最大値に行ったとき
 	if (m_fadeFrameCount >= kMaxAlpha)
 	{
-		m_isFinishFadeIn = true;
+		m_isFinishFadeOut = true;
 		m_fadeFrameCount = kMaxAlpha;
 	}
 	else
 	{
-		m_isFinishFadeIn = false;
+		m_isFinishFadeOut = false;
 	}
 	//最小値に行ったとき
 	if (m_fadeFrameCount <= 0)
 	{
-		m_isFinishFadeOut = true;
+		m_isFinishFadeIn = true;
 		m_fadeFrameCount = 0;
 	}
 	else
 	{
-		m_isFinishFadeOut = false;
+		m_isFinishFadeIn = false;
 	}
 }
 

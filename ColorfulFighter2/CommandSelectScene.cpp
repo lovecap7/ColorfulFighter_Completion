@@ -806,7 +806,7 @@ CommandSelectScene::CommandSelectScene(SceneController& controller) :
 	m_isReadyP2(false),
 	m_selectCommandIndexP1{ 0,0,0 },
 	m_selectCommandIndexP2{ 0,0,0 },
-	m_isFadeIn(false),
+	m_isFadeOut(false),
 	m_blinkCountFrame(0),
 	m_animCountFrame(0),
 	m_animIndexP1(0),
@@ -970,9 +970,9 @@ void CommandSelectScene::Update(Input& input, Input& input2)
 	//2人が準備完了したらゲームシーンへ
 	if (m_isReadyP1 && m_isReadyP2)
 	{
-		m_isFadeIn = true;
+		m_isFadeOut = true;
 		//フェードインしてからシーン移動
-		if (m_fadeManager->IsFinishFadeIn())
+		if (m_fadeManager->IsFinishFadeOut())
 		{
 			//このシーンでやりたいこと
 			//キャラクターを決定したらそのキャラクターの
@@ -992,9 +992,9 @@ void CommandSelectScene::Update(Input& input, Input& input2)
 	{
 		if (input.IsTrigger("Start") || input2.IsTrigger("Start"))
 		{
-			m_isFadeIn = true;
+			m_isFadeOut = true;
 		}
-		if (m_fadeManager->IsFinishFadeIn())
+		if (m_fadeManager->IsFinishFadeOut())
 		{
 			//タイトル画面に戻る
 			m_controller.ChangeScene(std::make_shared<TitleScene>(m_controller));
@@ -1064,7 +1064,7 @@ void CommandSelectScene::Draw()
 	DrawGraph(0, Game::kScreenHeight - 50, m_operationHandle, true);
 
 	//フェードイン
-	m_fadeManager->DrawWhiteFade(m_isFadeIn);
+	m_fadeManager->DrawWhiteFade(m_isFadeOut);
 
 #if _DEBUG	
 	DxLib::DrawString(10, 10, "CharacterselectScene", 0xffffff);

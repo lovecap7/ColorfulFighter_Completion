@@ -153,6 +153,17 @@ Player::Player(PlayerIndex playerIndex, int* selectCommandIndex,CharaColorIndex 
 
 Player::~Player()
 {
+	DeleteGraph(m_lightPunchSeHandle);
+	DeleteGraph(m_lightKickSeHandle);
+	DeleteGraph(m_highPunchSeHandle);
+	DeleteGraph(m_highKickSeHandle);
+	DeleteGraph(m_downSeHandle);//倒れる音
+	DeleteGraph(m_jumpSeHandle);//ジャンプの音
+	DeleteGraph(m_jumpedSeHandle);//着地したときの音
+	DeleteGraph(m_graspSeHandle);//つかむ音
+	DeleteGraph(m_throwSeHandle);//投げる
+	DeleteGraph(m_loseSeHandle);//負け
+	DeleteGraph(m_winSeHandle);//勝ち
 }
 
 //ラウンド切り替わりの際の初期化にも使う

@@ -57,7 +57,7 @@ private:
     int m_cancelSeHandle;//キャンセル音
     //フェードインするために使う
     std::shared_ptr<FadeManager> m_fadeManager;
-    bool m_isFadeIn;
+    bool m_isFadeOut;
     //コマンド技を選ぶ処理に使う
      //現在の技のセレクト番号
     int m_currentSelectCommandIndexP1;
@@ -102,6 +102,8 @@ private:
     void DrawCharacter();
     //点滅
     void UpdateBlink();
+    //Loadingの時に出す画像
+    int m_loadingHandle;
 public:
     CommandSelectScene(SceneController& controller);
     ~CommandSelectScene();

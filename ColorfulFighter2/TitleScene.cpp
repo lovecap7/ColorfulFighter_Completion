@@ -101,7 +101,7 @@ void TitleScene::UpdateNormal(Input& input, Input& input2)
 		m_se->SetSE(m_startSeHandle);
 		m_se->Volume(kSeVolume);
 		m_se->PlayOnce();
-		m_isFadeIn = false;
+		m_isFadeOut = false;
 		m_update = &TitleScene::UpdateGameStart;
 		m_draw = &TitleScene::DrawGameStart;
 		return;
@@ -192,10 +192,10 @@ void TitleScene::UpdateNormal(Input& input, Input& input2)
 	//最初に戻る
 	if (m_bgm->CheckEndBGM())
 	{
-		m_isFadeIn = true;
+		m_isFadeOut = true;
 		if (m_fadeManager->IsFinishFadeIn())
 		{
-			m_isFadeIn = false;
+			m_isFadeOut = false;
 			//デモムービー
 			m_bgm->Stop();
 			m_se->Stop();
@@ -221,12 +221,13 @@ void TitleScene::DrawNormal()
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_titleFadeCountFrame);
 	DrawGraph(kTitlePosX, kTitlePosY, m_titleHandle, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	m_fadeManager->DrawBlackFade(m_isFadeIn);
+	m_fadeManager->DrawBlackFade(m_isFadeOut);
 }
 
 void TitleScene::UpdateOpening(Input& input, Input& input2)
 {
 	//町の騒音
+	m_se->SetSE(m_citySeHandle);
 	m_se->PlayLoop();
 	//スキップ
 	if (input.IsTrigger("A") ||
@@ -313,14 +314,14 @@ void TitleScene::UpdateOpening(Input& input, Input& input2)
 			}
 		}
 	}
-	m_isFadeIn = false;
+	m_isFadeOut = false;
 }
 
 void TitleScene::DrawOpening()
 {
 	//キャラクターが歩いてくる
 	DrawActor();
-	m_fadeManager->DrawBlackFade(m_isFadeIn);
+	m_fadeManager->DrawBlackFade(m_isFadeOut);
 }
 
 void TitleScene::UpdateDemo(Input& input, Input& input2)
@@ -341,9 +342,9 @@ void TitleScene::UpdateDemo(Input& input, Input& input2)
 		!GetMovieStateToGraph(m_demoMovieHandle))
 	{
 		//フェードインしてオープニングに進む
-		m_isFadeIn = true;
+		m_isFadeOut = true;
 	}
-	if (m_fadeManager->IsFinishFadeIn())
+	if (m_fadeManager->IsFinishFadeOut())
 	{
 		//再生を止める
 		PauseMovieToGraph(m_demoMovieHandle);
@@ -373,16 +374,16 @@ void TitleScene::DrawDemo()
 	DrawRotaGraph(Game::kScreenWidth/2, 300,
 		0.5, 0.0,
 		m_titleHandle, true, false);
-	m_fadeManager->DrawBlackFade(m_isFadeIn);
+	m_fadeManager->DrawBlackFade(m_isFadeOut);
 }
 
 void TitleScene::UpdateGameStart(Input& input, Input& input2)
 {
 	m_textBlinkFrame += kAddGameStartTextFrame;
-	//フェードイン
-	m_isFadeIn = true;
-	//フェードインしきったら切り替え
-	if (m_fadeManager->IsFinishFadeIn())
+	//フェードアウト
+	m_isFadeOut = true;
+	//フェードアウトしきったら切り替え
+	if (m_fadeManager->IsFinishFadeOut())
 	{
 		//次の状態はこのクラスが覚えておく
 		m_controller.ChangeScene(std::make_shared<CommandSelectScene>(m_controller));
@@ -395,7 +396,7 @@ void TitleScene::DrawGameStart()
 	DrawActor();
 	DrawBlinkingText();
 	DrawGraph(kTitlePosX, kTitlePosY, m_titleHandle, true);
-	m_fadeManager->DrawWhiteFade(m_isFadeIn);
+	m_fadeManager->DrawWhiteFade(m_isFadeOut);
 }
 
 //裏で戦っているキャラクター
@@ -451,21 +452,21 @@ TitleScene::TitleScene(SceneController& contoller) :
 	m_startSeHandle(LoadSoundMem("./SE/Select/ReadySE.mp3")),
 	m_actor1(-1, kAnimNum, kIWalkOneAnimFrame),
 	m_actor2(-1, kAnimNum, kIWalkOneAnimFrame),
-	m_demoMovieHandle(LoadGraph("./Movie/DemoMove.mp4"))
+	m_demoMovieHandle(LoadGraph("./Movie/DemoMove.mp4")),
+	m_citySeHandle(LoadSoundMem("./SE/Title/city.mp3")),
+	m_bgmHandle(LoadSoundMem("./BGM/BGM_Title.mp3"))
 {
 	m_actor1.handle = m_walkHandle;
 	m_actor2.handle = m_walkHandle;
 	m_bgm = std::make_shared<BGM>();
-	int bgmHandle = LoadSoundMem("./BGM/BGM_Title.mp3");
-	m_bgm->SetBGM(bgmHandle);
+	m_bgm->SetBGM(m_bgmHandle);
 	m_bgm->Volume(kBgmVolume);
 	m_se = std::make_shared<SE>();
 	//町の騒音を流してボタンを押したら決定音に上書きする
-	int citySeHandle = LoadSoundMem("./SE/Title/city.mp3");
-	m_se->SetSE(citySeHandle);
+	m_se->SetSE(m_citySeHandle);
 	m_se->Volume(kSeVolume);
 	m_fadeManager = std::make_shared<FadeManager>();
-	m_isFadeIn = false;
+	m_isFadeOut = false;
 }
 
 TitleScene::~TitleScene()
@@ -480,9 +481,11 @@ TitleScene::~TitleScene()
 	DeleteGraph(m_guardHandle);
 	DeleteGraph(m_walkHandle);
 	DeleteGraph(m_startSeHandle);
+	DeleteGraph(m_citySeHandle);
 	DeleteGraph(m_demoMovieHandle);
 	DeleteGraph(m_actor1.handle);
 	DeleteGraph(m_actor2.handle);
+	DeleteGraph(m_bgmHandle);
 }
 
 void TitleScene::Update(Input& input, Input& input2)

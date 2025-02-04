@@ -293,16 +293,18 @@ Bullet::Bullet(PlayerIndex playerIndex):
 	m_finishAnimIndex(kFinishHadouAnimIndex),
 	m_animCountFrame(0),
 	m_update(&Bullet::UpdateHadou),
-	m_draw(&Bullet::DrawHadou)
+	m_draw(&Bullet::DrawHadou),
+	m_blueBulletHandle(LoadGraph("./img/Bullet/BlueBullet160x160.png")),//ê¬
+	m_yellowBulletHandle(LoadGraph("./img/Bullet/YellowBullet160x160.png")),//â©êF
+	m_purpleBulletHandle(LoadGraph("./img/Bullet/PurpleBullet160x160.png"))//éá
 {
-	m_blueBulletHandle = LoadGraph("./img/Bullet/BlueBullet160x160.png");//ê¬
-	m_yellowBulletHandle = LoadGraph("./img/Bullet/YellowBullet160x160.png");//â©êF
-	m_purpleBulletHandle = LoadGraph("./img/Bullet/PurpleBullet160x160.png");//éá
 }
 
 Bullet::~Bullet()
 {
-
+	DeleteGraph(m_blueBulletHandle);
+	DeleteGraph(m_yellowBulletHandle);
+	DeleteGraph(m_purpleBulletHandle);
 }
 
 void Bullet::Init()

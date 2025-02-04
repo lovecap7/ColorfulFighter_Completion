@@ -53,11 +53,13 @@ private:
     int m_titleFadeCountFrame;//タイトルがだんだん出てくる演出に使う
     //音
     std::shared_ptr<BGM> m_bgm;
+    int m_bgmHandle;
     std::shared_ptr<SE> m_se;
-	int m_startSeHandle;
+	int m_startSeHandle;//始まるときの音
+    int m_citySeHandle;//町の騒音
     //フェード
     std::shared_ptr<FadeManager> m_fadeManager;
-    bool m_isFadeIn;
+    bool m_isFadeOut;
     //関数
     void DrawBlinkingText(); //テキストが出たり消えたりする
     void DrawActor();

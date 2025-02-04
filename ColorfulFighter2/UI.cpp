@@ -522,9 +522,6 @@ UI::UI(int* selectCommandIndexP1, int* selectCommandIndexP2) :
 	m_displayFinishRoundCountFrame(0),
 	m_startRoundCount(0),
 	m_roundNumHandle(-1),
-	m_sprite1Handle(-1),
-	m_sprite2Handle(-1),
-	m_sprite3Handle(-1),
 	m_resultHandle(-1),
 	m_roundFinishHandle(-1),
 	m_fightScale(1.0f),
@@ -571,7 +568,11 @@ UI::UI(int* selectCommandIndexP1, int* selectCommandIndexP2) :
 	m_winRoundP1Handle(LoadGraph("./img/UI/Always/1PWinNumIcon.png")),
 	m_winRoundP2Handle(LoadGraph("./img/UI/Always/2PWinNumIcon.png")),
 	m_onesPlaceHandle(0),
-	m_tensPlaceHandle(0)
+	m_tensPlaceHandle(0),
+	//スプライト
+	m_sprite1Handle(LoadGraph("./img/UI/splash/splash.png")),
+	m_sprite2Handle(LoadGraph("./img/UI/splash/splash2.png")),
+	m_sprite3Handle(LoadGraph("./img/UI/splash/splash3.png"))
 {
 	int noWinRoundHandle = LoadGraph("./img/UI/Always/WinNullIcon.png");
 	m_winRound1P1Handle = noWinRoundHandle;
@@ -623,15 +624,61 @@ UI::UI(int* selectCommandIndexP1, int* selectCommandIndexP2) :
 		//2P
 		m_selectCommandIconP2Handle[i] = m_commandIconHandle[selectCommandIndexP2[i] - 1];
 	}
-
-	//スプライト
-	m_sprite1Handle = LoadGraph("./img/UI/splash/splash.png");
-	m_sprite2Handle = LoadGraph("./img/UI/splash/splash2.png");
-	m_sprite3Handle = LoadGraph("./img/UI/splash/splash3.png");
 }
 
 UI::~UI()
 {
+	
+	DeleteGraph(m_fightHandle);//FIGHT
+	DeleteGraph(m_winnerHandle);//Winner
+	DeleteGraph(m_drawHandle);//引き分け
+	DeleteGraph(m_koHandle);//KO
+	DeleteGraph(m_timeupHandle);//TimeUp
+	//ラウンドコール
+	DeleteGraph(m_roundTextHandle);
+	DeleteGraph(m_round1Handle);
+	DeleteGraph(m_round2Handle);
+	DeleteGraph(m_round3Handle);
+	DeleteGraph(m_roundOverHandle);
+	//タイマーの数字
+	DeleteGraph(m_timeZero);//0
+	DeleteGraph(m_timeOne);	//1
+	DeleteGraph(m_timeTwo);	//2
+	DeleteGraph(m_timeThree);//3
+	DeleteGraph(m_timeFour);//4
+	DeleteGraph(m_timeFive);//5
+	DeleteGraph(m_timeSix);//6
+	DeleteGraph(m_timeSeven);//7
+	DeleteGraph(m_timeEight);//8
+	DeleteGraph(m_timeNine);//9
+	//HP
+	DeleteGraph(m_hpFrameHandle);//フレーム
+	//勝利数
+	DeleteGraph(m_winRoundP1Handle);
+	DeleteGraph(m_winRoundP2Handle);
+	DeleteGraph(m_winRound1P1Handle);
+	DeleteGraph(m_winRound1P2Handle);
+	DeleteGraph(m_winRound2P1Handle);
+	DeleteGraph(m_winRound2P2Handle);
+
+	//選んだコマンド
+	for (int i = 0; i < kCommandNum; ++i)
+	{
+		DeleteGraph(m_commandIconHandle[i]);
+	}
+	//それぞれの選んだコマンドの画像を取得
+	for (int i = 0; i < 3; ++i)
+	{
+		//1P
+		DeleteGraph(m_selectCommandIconP1Handle[i]);//セレクト番号は1~9なので配列に合わせて-1引く
+		//2P
+		DeleteGraph(m_selectCommandIconP2Handle[i]);
+	}
+
+	//スプライト
+	DeleteGraph(m_sprite1Handle);
+	DeleteGraph(m_sprite2Handle);
+	DeleteGraph(m_sprite3Handle);
 }
 
 void UI::Init(float p1Hp, float p2Hp, GameManager& gameManager)

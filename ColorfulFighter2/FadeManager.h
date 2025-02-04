@@ -9,8 +9,8 @@ public:
 	FadeManager();
 	~FadeManager();
 
-	void DrawBlackFade(bool isFadeIn);
-	void DrawWhiteFade(bool isFadeIn);
+	void DrawBlackFade(bool isFadeOut);
+	void DrawWhiteFade(bool isFadeOut);
 	bool IsFinishFadeIn() { return m_isFinishFadeIn; }
 	bool IsFinishFadeOut() { return m_isFinishFadeOut; }
 	int GetFadeFrameCount() { return m_fadeFrameCount; }

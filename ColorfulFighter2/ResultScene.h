@@ -74,7 +74,7 @@ private:
 	int m_blinkCountP2;//点滅のカウント
     //フェードインするために使う
     std::shared_ptr<FadeManager> m_fadeManager;
-    bool m_isFadeIn;
+    bool m_isFadeOut;
 public:
     ResultScene(SceneController& controller);
     ~ResultScene();

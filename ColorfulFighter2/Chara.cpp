@@ -6,6 +6,9 @@
 #include <cassert>
 namespace
 {
+	//コマンド技の数
+	constexpr int kSelectCommandNum = 3;
+
 	//硬直フレームが0の技はDownにする
 	constexpr int kDown = 0;
 	//SEのボリューム
@@ -113,7 +116,7 @@ Chara::Chara(int* selectCommandIndex, CharaColorIndex charaColorIndex) :
 	//色
 	InitColor(charaColorIndex);
 	m_voice = std::make_shared<SE>();//ボイスを確保
-	for (int i = 0; i < 3;++i)
+	for (int i = 0; i < kSelectCommandNum;++i)
 	{
 		m_selectCommandIndex[i] = selectCommandIndex[i];
 	}
@@ -121,6 +124,61 @@ Chara::Chara(int* selectCommandIndex, CharaColorIndex charaColorIndex) :
 
 Chara::~Chara()
 {
+	DeleteGraph(m_idleStandHandel);//待機
+	DeleteGraph(m_idleSquatHandel);//しゃがみ待機
+	DeleteGraph(m_walkFrontHandel);//前歩き
+	DeleteGraph(m_walkBackHandel);//後ろ歩き
+	DeleteGraph(m_jumpHandel);//ジャンプ
+	//立ち
+	DeleteGraph(m_punchLightHandle);//弱パンチ
+	DeleteGraph(m_punchHighHandle);//強パンチ
+	DeleteGraph(m_kickLightHandle);//弱キック
+	DeleteGraph(m_kickHighHandle);//強キック
+	//しゃがみ
+	DeleteGraph(m_punchLightSquatHandle);//しゃがみ弱パンチ
+	DeleteGraph(m_punchHighSquatHandle);//しゃがみ強パンチ
+	DeleteGraph(m_kickLightSquatHandle);//しゃがみ弱キック
+	DeleteGraph(m_kickHighSquatHandle);//しゃがみ強キック
+	//空中
+	DeleteGraph(m_punchLightAerialHandle);//空中弱パンチ
+	DeleteGraph(m_punchHighAerialHandle);//空中強パンチ
+	DeleteGraph(m_kickLightAerialHandle);//空中弱キック
+	DeleteGraph(m_kickHighAerialHandle);//空中強キック
+	//ガード
+	DeleteGraph(m_guardStandHandle);//立ちガード
+	DeleteGraph(m_guardSquatHandle);//しゃがみガード
+	//投げ
+	DeleteGraph(m_graspHandle);//つかみ
+	DeleteGraph(m_throwFrontHandle);//前投げ
+	DeleteGraph(m_throwBackHandle);//後ろ投げ
+	//やられ
+	DeleteGraph(m_damageStandHandle);//喰らい
+	DeleteGraph(m_damageAerialHandle);//喰らい
+	DeleteGraph(m_downHandle);//ダウン
+	DeleteGraph(m_downAerialHandle);//空中ダウン
+	DeleteGraph(m_standUpHandle);//起き上がり
+
+	DeleteGraph(m_commandHandle1);//コマンド技
+	DeleteGraph(m_commandHandle2);//コマンド技
+	DeleteGraph(m_commandHandle3);//コマンド技
+	DeleteGraph(m_commandHandle4);//コマンド技
+	DeleteGraph(m_commandHandle5);//コマンド技
+	DeleteGraph(m_commandHandle6);//コマンド技
+	DeleteGraph(m_commandHandle7);//コマンド技
+	DeleteGraph(m_commandHandle8);//コマンド技
+	DeleteGraph(m_commandHandle9);//コマンド技
+	DeleteGraph(m_winPoseHandle);//勝利ポーズ
+	for (auto& handle : m_commandSeHandle)
+	{
+		DeleteGraph(handle);
+	}
+	DeleteGraph(m_attack1VoiceHandle);
+	DeleteGraph(m_attack2VoiceHandle);
+	DeleteGraph(m_attack3VoiceHandle);
+	DeleteGraph(m_damage1VoiceHandle);
+	DeleteGraph(m_damage2VoiceHandle);
+	DeleteGraph(m_standUp1VoiceHandle);
+	DeleteGraph(m_standUp2VoiceHandle);
 }
 
 

@@ -97,6 +97,8 @@ CollisionCheck::CollisionCheck():
 
 CollisionCheck::~CollisionCheck()
 {
+	DeleteGraph(m_hitSeHandle);
+	DeleteGraph(m_guardSeHandle);
 }
 
 void CollisionCheck::Update(Player& p1, Player& p2, Bullet& bulletP1, Bullet& bulletP2, 

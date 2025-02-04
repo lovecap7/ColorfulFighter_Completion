@@ -62,7 +62,7 @@ ResultScene::ResultScene(SceneController& controller) :
 	m_p1ImageScale(1.0),
 	m_p2ImageScale(1.0),
 	m_addScale(kAddScale),
-	m_isFadeIn(false),
+	m_isFadeOut(false),
 	m_selectMenuIndexP1(0),
 	m_selectMenuIndexP2(0),
 	m_rematchBottunHandle(LoadGraph("./img/Menu/Rematch.png")),
@@ -208,7 +208,7 @@ ResultScene::ResultScene(SceneController& controller) :
 	m_seP2 = std::make_shared<SE>();
 	
 
-	//フェードインするときに使う
+	//フェードするときに使う
 	m_fadeManager = std::make_shared<FadeManager>();
 }
 
@@ -468,11 +468,11 @@ bool ResultScene::CheckDecidedMenu()
 		//点滅が終わったら
 		if (m_blinkCountP1 >= kBlinkNum && m_blinkCountP2 >= kBlinkNum)
 		{
-			m_isFadeIn = true;
+			m_isFadeOut = true;
 		}
 	}
-	//フェードインしたら
-	if (m_fadeManager->IsFinishFadeIn())
+	//フェードアウトしたら
+	if (m_fadeManager->IsFinishFadeOut())
 	{
 		//番号にあった関数を呼ぶ
 		if (m_selectMenuIndexP1 == 0 && m_selectMenuIndexP2 == 0)
@@ -570,6 +570,6 @@ void ResultScene::Draw()
 	DrawMenu();
 
 	//フェード
-	m_fadeManager->DrawBlackFade(m_isFadeIn);
+	m_fadeManager->DrawBlackFade(m_isFadeOut);
 }
 
