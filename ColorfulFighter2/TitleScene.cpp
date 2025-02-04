@@ -267,7 +267,11 @@ void TitleScene::UpdateOpening(Input& input, Input& input2)
 	else
 	{
 		m_actor1Pos.x = Game::kScreenWidth / 2 - kEyeContactDistance;
-		m_actor1.handle = m_idleHandle;
+		if (m_actor1.handle != m_idleHandle)
+		{
+			m_actor1.animIndex = 0;
+			m_actor1.handle = m_idleHandle;
+		}
 	}
 	if (m_actor2Pos.x > (Game::kScreenWidth / 2 + kEyeContactDistance))
 	{
@@ -277,7 +281,11 @@ void TitleScene::UpdateOpening(Input& input, Input& input2)
 	else
 	{
 		m_actor2Pos.x = Game::kScreenWidth / 2 + kEyeContactDistance;
-		m_actor2.handle = m_idleHandle;
+		if (m_actor2.handle != m_idleHandle)
+		{
+			m_actor2.animIndex = 0;
+			m_actor2.handle = m_idleHandle;
+		}
 	}
 	//アニメーションの1枚目を0番として数えるので
 	//アニメーションの最大数から-1した値が最後のアニメーション

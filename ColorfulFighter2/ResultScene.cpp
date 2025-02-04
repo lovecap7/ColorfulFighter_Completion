@@ -440,11 +440,8 @@ void ResultScene::Update(Input& input, Input& input2)
 			}
 		}
 	}
-	else
-	{
-		//ボタンを押したらスキップ
-		SkipResult(input, input2);
-	}
+	//ボタンを押したらスキップ
+	SkipResult(input, input2);
 	//ボタンの大きさを変える
 	ChangeBottunScale(m_isDecideP1, m_selectBottunScaleP1);
 	ChangeBottunScale(m_isDecideP2, m_selectBottunScaleP2);
@@ -492,7 +489,6 @@ void ResultScene::SkipResult(Input& input, Input& input2)
 	//スキップ
 	if (input.IsTrigger("A") || input2.IsTrigger("A"))
 	{
-		//メニューの表示
 		m_isSelecting = true;
 	}
 }

@@ -417,6 +417,7 @@ void Chara::InitColor(CharaColorIndex charaColorIndex)
 		m_winPoseHandle = LoadGraph("./img/Chara/White/playerbase/win_001.png");//勝利ポーズ}
 		break;
 	}
+
 }
 
 //ボイス
@@ -1920,10 +1921,10 @@ void Chara::GetHitBoxAttackedAerial(Player& player)
 	legBox.x2 = 170;
 	legBox.y2 = 170;
 	//投げやられ 
-	throwBox.x1 = 0;
+	throwBox.x1 = -150;
 	throwBox.y1 = 0;
-	throwBox.x2 = 0;
-	throwBox.y2 = 0;
+	throwBox.x2 = 150;
+	throwBox.y2 = 200;
 	//攻撃
 	attackBox.x1 = 0;
 	attackBox.y1 = 0;
@@ -2905,7 +2906,7 @@ void Chara::GetHitBoxCommand4(Player& player)
 	legBox.x1 = -70;
 	legBox.y1 = 0;
 	legBox.x2 = 200;
-	legBox.y2 = 100;
+	legBox.y2 = 200;
 	//投げやられ 
 	throwBox.x1 = -100;
 	throwBox.y1 = 0;
@@ -3294,10 +3295,10 @@ void Chara::GetGiveEffectCommand7(Player& player)
 	//強版
 	if (player.GetAttackAttackTypes() == AttackTypes::HighKick)
 	{
-		//全体フレーム48
+		//全体フレーム57
 		//無敵
 		player.ResetHitBox();
-		m_velocity.y = -10.0f;
+		m_velocity.y = -20.0f;
 		m_velocity.x = 0.0f;
 		player.SetGiveDamage(12.0f);
 		player.SetGiveNoActFrame(kDown);
@@ -3381,10 +3382,10 @@ void Chara::GetHitBoxCommand8(Player& player)
 	legBox.x2 = 180;
 	legBox.y2 = 180;
 	//投げやられ 
-	throwBox.x1 = 0;
+	throwBox.x1 = -100;
 	throwBox.y1 = 0;
-	throwBox.x2 = 0;
-	throwBox.y2 = 0;
+	throwBox.x2 = 100;
+	throwBox.y2 = 200;
 	//攻撃
 	attackBox.x1 = 0;
 	attackBox.y1 = 0;

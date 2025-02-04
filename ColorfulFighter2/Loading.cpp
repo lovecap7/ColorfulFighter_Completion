@@ -104,10 +104,15 @@ void Loading::Update()
 
 void Loading::Draw()
 {
+#if _DEBUG
 	DrawFormatString(0, 30, 0xff00ff, "処理数 = %d", GetASyncLoadNum());
+	printfDx("処理数 = %d\n", GetASyncLoadNum());
+#endif
 	if (GetASyncLoadNum() > 0)
 	{
+		SetDrawBright(200, 200, 200);
 		DrawGraph(0, 0, m_loadingHandle, false);
+		SetDrawBright(255, 255, 255);
 		//切り取るを計算する
 		int sizeX, sizeY;
 		GetGraphSize(m_actor1.handle, &sizeX, &sizeY);//画像サイズ

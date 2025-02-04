@@ -136,7 +136,6 @@ Player::Player(PlayerIndex playerIndex, int* selectCommandIndex,CharaColorIndex 
 	m_throwSeHandle(LoadSoundMem("./SE/PlayerBase/Throw.mp3")),//“Š‚°‚é
 	m_loseSeHandle(LoadSoundMem("./SE/PlayerBase/voice/Lose.mp3")),//•‰‚¯
 	m_winSeHandle(LoadSoundMem("./SE/PlayerBase/voice/Win.mp3"))//Ÿ‚¿
-	
 {
 	for (int i = 0;i < 3;++i)
 	{

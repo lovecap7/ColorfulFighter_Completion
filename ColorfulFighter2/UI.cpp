@@ -652,6 +652,7 @@ void UI::Init(float p1Hp, float p2Hp, GameManager& gameManager)
 	m_damageDisplayCountFrameP1 = 0;
 	m_damageDisplayCountFrameP2 = 0;
 	m_blinkHpbarCountFrameP1 = 0;
+	m_blinkHpbarCountFrameP2 = 0;
 	m_blinkHpbarIntervalFrameP1 = kBlinkHpbarNormalFrame;
 	m_blinkHpbarIntervalFrameP2 = kBlinkHpbarNormalFrame;
 	m_hpColorP1 = kHpColorNormal;
