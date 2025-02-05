@@ -9,7 +9,7 @@ namespace Game//‘®«
 	constexpr int kScreenHeight = 900;
 	constexpr int kColorBitNum = 32;
 
-	constexpr bool kDefaultWindowMode = true;
+	constexpr bool kDefaultWindowMode = false;
 }
 
 enum class PlayerIndex

@@ -193,7 +193,7 @@ void TitleScene::UpdateNormal(Input& input, Input& input2)
 	if (m_bgm->CheckEndBGM())
 	{
 		m_isFadeOut = true;
-		if (m_fadeManager->IsFinishFadeIn())
+		if (m_fadeManager->IsFinishFadeOut())
 		{
 			m_isFadeOut = false;
 			//デモムービー
@@ -341,7 +341,7 @@ void TitleScene::UpdateDemo(Input& input, Input& input2)
 		input2.IsTrigger("RB") ||
 		!GetMovieStateToGraph(m_demoMovieHandle))
 	{
-		//フェードインしてオープニングに進む
+		//フェードアウトしてオープニングに進む
 		m_isFadeOut = true;
 	}
 	if (m_fadeManager->IsFinishFadeOut())
