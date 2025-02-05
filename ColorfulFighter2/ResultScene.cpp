@@ -80,7 +80,8 @@ ResultScene::ResultScene(SceneController& controller) :
 	m_selectSeHandle(LoadSoundMem("./SE/Select/ReadySE.mp3")),
 	m_cursorMoveSehandle(LoadSoundMem("./SE/Select/CursorMoveSE.mp3")),
 	m_serifHandle(-1),
-	m_backGroundHandle(LoadGraph("./img/Result/ResultBack.png"))
+	m_backGroundHandle(LoadGraph("./img/Result/ResultBack.png")),
+	m_loadingHandle(LoadGraph("./img/Loading/Operation.png"))
 {
 	int serif;
 	switch (GetRand(kSerifMaxIndex))
@@ -198,9 +199,9 @@ ResultScene::ResultScene(SceneController& controller) :
 	}
 
 	m_bgm = std::make_shared<BGM>();
-	int resultBgmhandle = LoadSoundMem("./BGM/BGM_Result.mp3");
-	m_menuBgm = LoadSoundMem("./BGM/BGM_Menu.mp3");
-	m_bgm->SetBGM(resultBgmhandle);
+	m_resultBgmHandle = LoadSoundMem("./BGM/BGM_Result.mp3");
+	m_menuBgmHandle = LoadSoundMem("./BGM/BGM_Menu.mp3");
+	m_bgm->SetBGM(m_resultBgmHandle);
 	m_bgm->Volume(kBgmVolume);
 	m_bgm->PlayOnce();
 
@@ -225,7 +226,9 @@ ResultScene::~ResultScene()
 	DeleteGraph(m_backGroundHandle);
 	DeleteGraph(m_p1Handle);
 	DeleteGraph(m_p2Handle);
-	DeleteGraph(m_menuBgm);
+	DeleteGraph(m_menuBgmHandle);
+	DeleteGraph(m_resultBgmHandle);
+	DeleteGraph(m_loadingHandle);
 }
 
 void ResultScene::SelectMenu(Input& input,int& selectMenuIndex,bool& isDecide, std::shared_ptr<SE>& se)
@@ -495,7 +498,7 @@ void ResultScene::SkipResult(Input& input, Input& input2)
 	{
 		//ƒƒjƒ…[‚Ì•\Ž¦‚ÆBGMØ‚è‘Ö‚¦
 		m_isSelecting = true;
-		m_bgm->SetBGM(m_menuBgm);
+		m_bgm->SetBGM(m_menuBgmHandle);
 		m_bgm->Volume(kBgmVolume);
 		m_bgm->PlayLoop();
 	}

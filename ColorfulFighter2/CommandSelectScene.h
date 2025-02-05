@@ -48,9 +48,10 @@ private:
     int m_blinkCountFrame;
     //サウンド
     std::shared_ptr<BGM> m_bgm;
+    int m_bgmHandle;
+    //SE
     std::shared_ptr<SE> m_seP1;
     std::shared_ptr<SE> m_seP2;
-    //SE
     int m_selectSeHandle;//決定音
     int m_readySeHandle;//準備完了音
     int m_cursorMoveSeHandle;//カーソル移動音

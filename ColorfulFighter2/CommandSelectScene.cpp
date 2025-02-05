@@ -850,12 +850,13 @@ CommandSelectScene::CommandSelectScene(SceneController& controller) :
 	m_gettingReadyHandle(LoadGraph("./img/CharacterSelect/Ready_Off.png")),//準備中
 	m_readyHandle(LoadGraph("./img/CharacterSelect/Ready_On.png")),//準備完了
 	m_currentReadyP1Handle(m_gettingReadyHandle),//準備完了かどうかを表示
-	m_currentReadyP2Handle(m_gettingReadyHandle)
+	m_currentReadyP2Handle(m_gettingReadyHandle),
+	m_loadingHandle(LoadGraph("./img/Loading/Operation.png"))
 {
 	//BGM
 	m_bgm = std::make_shared<BGM>();
-	int bgmhandle = LoadSoundMem("./BGM/BGM_SelectScene.mp3");
-	m_bgm->SetBGM(bgmhandle);
+	m_bgmHandle = LoadSoundMem("./BGM/BGM_SelectScene.mp3");
+	m_bgm->SetBGM(m_bgmHandle);
 	m_bgm->Volume(kBgmVolume);
 	m_bgm->PlayLoop();
 	//SE
@@ -953,6 +954,8 @@ CommandSelectScene::~CommandSelectScene()
 		DeleteGraph(m_selectCommandIconP1Handle[i]);
 		DeleteGraph(m_selectCommandIconP2Handle[i]);
 	}
+	DeleteGraph(m_bgmHandle);
+	DeleteGraph(m_loadingHandle);
 }
 
 void CommandSelectScene::Update(Input& input, Input& input2)
@@ -1065,6 +1068,10 @@ void CommandSelectScene::Draw()
 
 	//フェードイン
 	m_fadeManager->DrawWhiteFade(m_isFadeOut);
+	if (m_fadeManager->IsFinishFadeOut())
+	{
+		DrawGraph(0, 0, m_loadingHandle, false);
+	}
 
 #if _DEBUG	
 	DxLib::DrawString(10, 10, "CharacterselectScene", 0xffffff);

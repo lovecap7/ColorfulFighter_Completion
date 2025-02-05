@@ -153,17 +153,6 @@ Player::Player(PlayerIndex playerIndex, int* selectCommandIndex,CharaColorIndex 
 
 Player::~Player()
 {
-	DeleteGraph(m_lightPunchSeHandle);
-	DeleteGraph(m_lightKickSeHandle);
-	DeleteGraph(m_highPunchSeHandle);
-	DeleteGraph(m_highKickSeHandle);
-	DeleteGraph(m_downSeHandle);//倒れる音
-	DeleteGraph(m_jumpSeHandle);//ジャンプの音
-	DeleteGraph(m_jumpedSeHandle);//着地したときの音
-	DeleteGraph(m_graspSeHandle);//つかむ音
-	DeleteGraph(m_throwSeHandle);//投げる
-	DeleteGraph(m_loseSeHandle);//負け
-	DeleteGraph(m_winSeHandle);//勝ち
 }
 
 //ラウンド切り替わりの際の初期化にも使う
@@ -227,7 +216,7 @@ void Player::Init(float X,bool isLeft)
 	m_draw = &Player::IdleStandDraw;
 }
 
-void Player::Update(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::Update(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//地面についてるかチェック
 	CheckGround();
@@ -273,6 +262,22 @@ void Player::Draw(const Camera& camera)
 		}
 	}
 #endif
+}
+
+//デストラクタの呼ばれるタイミングを勘違いしてたのでこれで任意のタイミングで解放します。
+void Player::End()
+{
+	DeleteGraph(m_lightPunchSeHandle);
+	DeleteGraph(m_lightKickSeHandle);
+	DeleteGraph(m_highPunchSeHandle);
+	DeleteGraph(m_highKickSeHandle);
+	DeleteGraph(m_downSeHandle);//倒れる音
+	DeleteGraph(m_jumpSeHandle);//ジャンプの音
+	DeleteGraph(m_jumpedSeHandle);//着地したときの音
+	DeleteGraph(m_graspSeHandle);//つかむ音
+	DeleteGraph(m_throwSeHandle);//投げる
+	DeleteGraph(m_loseSeHandle);//負け
+	DeleteGraph(m_winSeHandle);//勝ち
 }
 
 void Player::JumpSE()
@@ -445,7 +450,7 @@ void Player::LookDir(Player& enemy)
 	}
 }
 
-bool Player::CheckHit(std::shared_ptr<Player> enemy)
+bool Player::CheckHit(Player& enemy)
 {
 	//攻撃の判定がないなら当たらない
 	if (m_hitBoxAttack.x1 == 0 &&
@@ -464,60 +469,60 @@ bool Player::CheckHit(std::shared_ptr<Player> enemy)
 
 		//当たり判定があるならチェック
 		//頭
-		if (enemy->m_hitBoxHead.x1 != 0 ||
-			enemy->m_hitBoxHead.y1 != 0 ||
-			enemy->m_hitBoxHead.x2 != 0 ||
-			enemy->m_hitBoxHead.y2 != 0)
+		if (enemy.m_hitBoxHead.x1 != 0 ||
+			enemy.m_hitBoxHead.y1 != 0 ||
+			enemy.m_hitBoxHead.x2 != 0 ||
+			enemy.m_hitBoxHead.y2 != 0)
 		{
 			//敵の頭のやられ判定////////////////////////////////////////
-			Vector3 enemyHead((enemy->m_pos.x - enemy->m_hitBoxHead.x2 + enemy->m_pos.x - enemy->m_hitBoxHead.x1) / 2,
-				(enemy->m_pos.y + enemy->m_hitBoxHead.y2 + enemy->m_pos.y + enemy->m_hitBoxHead.y1) / 2, 0.0f);
+			Vector3 enemyHead((enemy.m_pos.x - enemy.m_hitBoxHead.x2 + enemy.m_pos.x - enemy.m_hitBoxHead.x1) / 2,
+				(enemy.m_pos.y + enemy.m_hitBoxHead.y2 + enemy.m_pos.y + enemy.m_hitBoxHead.y1) / 2, 0.0f);
 			width = std::abs(attackPos.x - enemyHead.x);
 			height = std::abs(attackPos.y - enemyHead.y);
 
 			//X方向の攻撃の幅と体の幅を足した値より小さいなら当たってる
-			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy->m_hitBoxHead.x2 - enemy->m_hitBoxHead.x1) / 2) &&
+			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy.m_hitBoxHead.x2 - enemy.m_hitBoxHead.x1) / 2) &&
 				//Y方向攻撃の幅と体の幅を足した値より小さいなら当たってる
-				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy->m_hitBoxHead.y2 - enemy->m_hitBoxHead.y1) / 2)) return true;
+				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy.m_hitBoxHead.y2 - enemy.m_hitBoxHead.y1) / 2)) return true;
 			/////////////////////////////////////////////////////////////
 		}
 		
 
 		//体
-		if (enemy->m_hitBoxBody.x1 != 0 ||
-			enemy->m_hitBoxBody.y1 != 0 ||
-			enemy->m_hitBoxBody.x2 != 0 ||
-			enemy->m_hitBoxBody.y2 != 0)
+		if (enemy.m_hitBoxBody.x1 != 0 ||
+			enemy.m_hitBoxBody.y1 != 0 ||
+			enemy.m_hitBoxBody.x2 != 0 ||
+			enemy.m_hitBoxBody.y2 != 0)
 		{
 			//敵の体のやられ判定////////////////////////////////////////////
-			Vector3 enemyBody((enemy->m_pos.x - enemy->m_hitBoxBody.x2 + enemy->m_pos.x - enemy->m_hitBoxBody.x1) / 2,
-				(enemy->m_pos.y + enemy->m_hitBoxBody.y2 + enemy->m_pos.y + enemy->m_hitBoxBody.y1) / 2, 0.0f);
+			Vector3 enemyBody((enemy.m_pos.x - enemy.m_hitBoxBody.x2 + enemy.m_pos.x - enemy.m_hitBoxBody.x1) / 2,
+				(enemy.m_pos.y + enemy.m_hitBoxBody.y2 + enemy.m_pos.y + enemy.m_hitBoxBody.y1) / 2, 0.0f);
 			width = std::abs(attackPos.x - enemyBody.x);
 			height = std::abs(attackPos.y - enemyBody.y);
 
 			//X方向の攻撃の幅と体の幅を足した値より小さいなら当たってる
-			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy->m_hitBoxBody.x2 - enemy->m_hitBoxBody.x1) / 2) &&
+			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy.m_hitBoxBody.x2 - enemy.m_hitBoxBody.x1) / 2) &&
 				//Y方向攻撃の幅と体の幅を足した値より小さいなら当たってる
-				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy->m_hitBoxBody.y2 - enemy->m_hitBoxBody.y1) / 2)) return true;
+				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy.m_hitBoxBody.y2 - enemy.m_hitBoxBody.y1) / 2)) return true;
 			///////////////////////////////////////////////////////////////
 		}
 		
 		//足
-		if (enemy->m_hitBoxLeg.x1 != 0 ||
-			enemy->m_hitBoxLeg.y1 != 0 ||
-			enemy->m_hitBoxLeg.x2 != 0 ||
-			enemy->m_hitBoxLeg.y2 != 0)
+		if (enemy.m_hitBoxLeg.x1 != 0 ||
+			enemy.m_hitBoxLeg.y1 != 0 ||
+			enemy.m_hitBoxLeg.x2 != 0 ||
+			enemy.m_hitBoxLeg.y2 != 0)
 		{
 			//敵の足のやられ判定
-			Vector3 enemyLeg((enemy->m_pos.x - enemy->m_hitBoxLeg.x2 + enemy->m_pos.x - enemy->m_hitBoxLeg.x1) / 2,
-				(enemy->m_pos.y + enemy->m_hitBoxLeg.y2 + enemy->m_pos.y + enemy->m_hitBoxLeg.y1) / 2, 0.0f);
+			Vector3 enemyLeg((enemy.m_pos.x - enemy.m_hitBoxLeg.x2 + enemy.m_pos.x - enemy.m_hitBoxLeg.x1) / 2,
+				(enemy.m_pos.y + enemy.m_hitBoxLeg.y2 + enemy.m_pos.y + enemy.m_hitBoxLeg.y1) / 2, 0.0f);
 			width = std::abs(attackPos.x - enemyLeg.x);
 			height = std::abs(attackPos.y - enemyLeg.y);
 
 			//X方向の攻撃の幅と体の幅を足した値より小さいなら当たってる
-			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy->m_hitBoxLeg.x2 - enemy->m_hitBoxLeg.x1) / 2) &&
+			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy.m_hitBoxLeg.x2 - enemy.m_hitBoxLeg.x1) / 2) &&
 				//Y方向攻撃の幅と体の幅を足した値より小さいなら当たってる
-				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy->m_hitBoxLeg.y2 - enemy->m_hitBoxLeg.y1) / 2)) return true;
+				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy.m_hitBoxLeg.y2 - enemy.m_hitBoxLeg.y1) / 2)) return true;
 		}
 		
 	}
@@ -529,62 +534,62 @@ bool Player::CheckHit(std::shared_ptr<Player> enemy)
 
 		//当たり判定があるならチェック
 		//頭
-		if (enemy->m_hitBoxHead.x1 != 0 ||
-			enemy->m_hitBoxHead.y1 != 0 ||
-			enemy->m_hitBoxHead.x2 != 0 ||
-			enemy->m_hitBoxHead.y2 != 0)
+		if (enemy.m_hitBoxHead.x1 != 0 ||
+			enemy.m_hitBoxHead.y1 != 0 ||
+			enemy.m_hitBoxHead.x2 != 0 ||
+			enemy.m_hitBoxHead.y2 != 0)
 		{
 			//敵の頭のやられ判定////////////////////////////////////////
-			Vector3 enemyHead((enemy->m_pos.x + enemy->m_hitBoxHead.x2 + enemy->m_pos.x + enemy->m_hitBoxHead.x1) / 2,
-				(enemy->m_pos.y + enemy->m_hitBoxHead.y2 + enemy->m_pos.y + enemy->m_hitBoxHead.y1) / 2, 0.0f);
+			Vector3 enemyHead((enemy.m_pos.x + enemy.m_hitBoxHead.x2 + enemy.m_pos.x + enemy.m_hitBoxHead.x1) / 2,
+				(enemy.m_pos.y + enemy.m_hitBoxHead.y2 + enemy.m_pos.y + enemy.m_hitBoxHead.y1) / 2, 0.0f);
 
 			width = std::abs(attackPos.x - enemyHead.x);
 			height = std::abs(attackPos.y - enemyHead.y);
 
 			//X方向の攻撃の幅と頭の幅を足した値より小さいなら当たってる
-			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy->m_hitBoxHead.x2 - enemy->m_hitBoxHead.x1) / 2) &&
+			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy.m_hitBoxHead.x2 - enemy.m_hitBoxHead.x1) / 2) &&
 				//X方向の攻撃の幅と頭の幅を足した値より小さいなら当たってる
-				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy->m_hitBoxHead.y2 - enemy->m_hitBoxHead.y1) / 2)) return true;
+				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy.m_hitBoxHead.y2 - enemy.m_hitBoxHead.y1) / 2)) return true;
 			////////////////////////////////////////////////////////////
 		}
 	
 
 		//体
-		if (enemy->m_hitBoxBody.x1 != 0 ||
-			enemy->m_hitBoxBody.y1 != 0 ||
-			enemy->m_hitBoxBody.x2 != 0 ||
-			enemy->m_hitBoxBody.y2 != 0)
+		if (enemy.m_hitBoxBody.x1 != 0 ||
+			enemy.m_hitBoxBody.y1 != 0 ||
+			enemy.m_hitBoxBody.x2 != 0 ||
+			enemy.m_hitBoxBody.y2 != 0)
 		{
 			//敵の頭のやられ判定///////////////////////////////////////
-			Vector3 enemyBody((enemy->m_pos.x + enemy->m_hitBoxBody.x2 + enemy->m_pos.x + enemy->m_hitBoxBody.x1) / 2,
-				(enemy->m_pos.y + enemy->m_hitBoxBody.y2 + enemy->m_pos.y + enemy->m_hitBoxBody.y1) / 2, 0.0f);
+			Vector3 enemyBody((enemy.m_pos.x + enemy.m_hitBoxBody.x2 + enemy.m_pos.x + enemy.m_hitBoxBody.x1) / 2,
+				(enemy.m_pos.y + enemy.m_hitBoxBody.y2 + enemy.m_pos.y + enemy.m_hitBoxBody.y1) / 2, 0.0f);
 
 			width = std::abs(attackPos.x - enemyBody.x);
 			height = std::abs(attackPos.y - enemyBody.y);
 
 			//X方向の攻撃の幅と体の幅を足した値より小さいなら当たってる
-			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy->m_hitBoxBody.x2 - enemy->m_hitBoxBody.x1) / 2) &&
+			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy.m_hitBoxBody.x2 - enemy.m_hitBoxBody.x1) / 2) &&
 				//Y方向攻撃の幅と体の幅を足した値より小さいなら当たってる
-				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy->m_hitBoxBody.y2 - enemy->m_hitBoxBody.y1) / 2)) return true;
+				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy.m_hitBoxBody.y2 - enemy.m_hitBoxBody.y1) / 2)) return true;
 			/////////////////////////////////////////////////////////
 		}
 		
 		//足
-		if (enemy->m_hitBoxLeg.x1 != 0 ||
-			enemy->m_hitBoxLeg.y1 != 0 ||
-			enemy->m_hitBoxLeg.x2 != 0 ||
-			enemy->m_hitBoxLeg.y2 != 0)
+		if (enemy.m_hitBoxLeg.x1 != 0 ||
+			enemy.m_hitBoxLeg.y1 != 0 ||
+			enemy.m_hitBoxLeg.x2 != 0 ||
+			enemy.m_hitBoxLeg.y2 != 0)
 		{
 			//敵の足のやられ判定
-			Vector3 enemyLeg((enemy->m_pos.x + enemy->m_hitBoxLeg.x2 + enemy->m_pos.x + enemy->m_hitBoxLeg.x1) / 2,
-				(enemy->m_pos.y + enemy->m_hitBoxLeg.y2 + enemy->m_pos.y + enemy->m_hitBoxLeg.y1) / 2, 0.0f);
+			Vector3 enemyLeg((enemy.m_pos.x + enemy.m_hitBoxLeg.x2 + enemy.m_pos.x + enemy.m_hitBoxLeg.x1) / 2,
+				(enemy.m_pos.y + enemy.m_hitBoxLeg.y2 + enemy.m_pos.y + enemy.m_hitBoxLeg.y1) / 2, 0.0f);
 			width = std::abs(attackPos.x - enemyLeg.x);
 			height = std::abs(attackPos.y - enemyLeg.y);
 
 			//X方向の攻撃の幅と体の幅を足した値より小さいなら当たってる
-			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy->m_hitBoxLeg.x2 - enemy->m_hitBoxLeg.x1) / 2) &&
+			if (width < std::abs((m_hitBoxAttack.x2 - m_hitBoxAttack.x1) / 2) + std::abs((enemy.m_hitBoxLeg.x2 - enemy.m_hitBoxLeg.x1) / 2) &&
 				//Y方向攻撃の幅と体の幅を足した値より小さいなら当たってる
-				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy->m_hitBoxLeg.y2 - enemy->m_hitBoxLeg.y1) / 2)) return true;
+				height < std::abs((m_hitBoxAttack.y2 - m_hitBoxAttack.y1) / 2) + std::abs((enemy.m_hitBoxLeg.y2 - enemy.m_hitBoxLeg.y1) / 2)) return true;
 		}
 	}
 
@@ -593,7 +598,7 @@ bool Player::CheckHit(std::shared_ptr<Player> enemy)
 	return false;
 }
 
-bool Player::CheckHitGrasp(std::shared_ptr<Player> enemy)
+bool Player::CheckHitGrasp(Player& enemy)
 {
 	//攻撃の判定がないなら当たらない
 	if (m_hitBoxGrasp.x1 == 0 &&
@@ -612,20 +617,20 @@ bool Player::CheckHitGrasp(std::shared_ptr<Player> enemy)
 		Vector3 graspPos((m_pos.x + m_hitBoxGrasp.x2 + m_pos.x + m_hitBoxGrasp.x1) / 2,
 			(m_pos.y + m_hitBoxGrasp.y2 + m_pos.y + m_hitBoxGrasp.y1) / 2, 0.0f);
 		//投げやられ判定
-		if (enemy->m_hitBoxThrow.x1 != 0 ||
-			enemy->m_hitBoxThrow.y1 != 0 ||
-			enemy->m_hitBoxThrow.x2 != 0 ||
-			enemy->m_hitBoxThrow.y2 != 0)
+		if (enemy.m_hitBoxThrow.x1 != 0 ||
+			enemy.m_hitBoxThrow.y1 != 0 ||
+			enemy.m_hitBoxThrow.x2 != 0 ||
+			enemy.m_hitBoxThrow.y2 != 0)
 		{
 			//敵の投げのやられ判定
-			Vector3 enemyThrow((enemy->m_pos.x - enemy->m_hitBoxThrow.x2 + enemy->m_pos.x - enemy->m_hitBoxThrow.x1) / 2,
-				(enemy->m_pos.y + enemy->m_hitBoxThrow.y2 + enemy->m_pos.y + enemy->m_hitBoxThrow.y1) / 2, 0.0f);
+			Vector3 enemyThrow((enemy.m_pos.x - enemy.m_hitBoxThrow.x2 + enemy.m_pos.x - enemy.m_hitBoxThrow.x1) / 2,
+				(enemy.m_pos.y + enemy.m_hitBoxThrow.y2 + enemy.m_pos.y + enemy.m_hitBoxThrow.y1) / 2, 0.0f);
 			width = std::abs(graspPos.x - enemyThrow.x);
 			height = std::abs(graspPos.y - enemyThrow.y);
 
 
-			if (width < std::abs((m_hitBoxGrasp.x2 - m_hitBoxGrasp.x1) / 2) + std::abs((enemy->m_hitBoxThrow.x2 - enemy->m_hitBoxThrow.x1) / 2) &&
-				height < std::abs((m_hitBoxGrasp.y2 - m_hitBoxGrasp.y1) / 2) + std::abs((enemy->m_hitBoxThrow.y2 - enemy->m_hitBoxThrow.y1) / 2)) return true;
+			if (width < std::abs((m_hitBoxGrasp.x2 - m_hitBoxGrasp.x1) / 2) + std::abs((enemy.m_hitBoxThrow.x2 - enemy.m_hitBoxThrow.x1) / 2) &&
+				height < std::abs((m_hitBoxGrasp.y2 - m_hitBoxGrasp.y1) / 2) + std::abs((enemy.m_hitBoxThrow.y2 - enemy.m_hitBoxThrow.y1) / 2)) return true;
 		}
 	}
 	else
@@ -634,20 +639,20 @@ bool Player::CheckHitGrasp(std::shared_ptr<Player> enemy)
 		Vector3 graspPos((m_pos.x - m_hitBoxGrasp.x2 + m_pos.x - m_hitBoxGrasp.x1) / 2,
 			(m_pos.y + m_hitBoxGrasp.y2 + m_pos.y + m_hitBoxGrasp.y1) / 2, 0.0f);
 		//投げやられ判定
-		if (enemy->m_hitBoxThrow.x1 != 0 ||
-			enemy->m_hitBoxThrow.y1 != 0 ||
-			enemy->m_hitBoxThrow.x2 != 0 ||
-			enemy->m_hitBoxThrow.y2 != 0)
+		if (enemy.m_hitBoxThrow.x1 != 0 ||
+			enemy.m_hitBoxThrow.y1 != 0 ||
+			enemy.m_hitBoxThrow.x2 != 0 ||
+			enemy.m_hitBoxThrow.y2 != 0)
 		{
 			//敵の投げのやられ判定
-			Vector3 enemyThrow((enemy->m_pos.x + enemy->m_hitBoxThrow.x2 + enemy->m_pos.x + enemy->m_hitBoxThrow.x1) / 2,
-				(enemy->m_pos.y + enemy->m_hitBoxThrow.y2 + enemy->m_pos.y + enemy->m_hitBoxThrow.y1) / 2, 0.0f);
+			Vector3 enemyThrow((enemy.m_pos.x + enemy.m_hitBoxThrow.x2 + enemy.m_pos.x + enemy.m_hitBoxThrow.x1) / 2,
+				(enemy.m_pos.y + enemy.m_hitBoxThrow.y2 + enemy.m_pos.y + enemy.m_hitBoxThrow.y1) / 2, 0.0f);
 			width = std::abs(graspPos.x - enemyThrow.x);
 			height = std::abs(graspPos.y - enemyThrow.y);
 
 
-			if (width < std::abs((m_hitBoxGrasp.x2 - m_hitBoxGrasp.x1) / 2) + std::abs((enemy->m_hitBoxThrow.x2 - enemy->m_hitBoxThrow.x1) / 2) &&
-				height < std::abs((m_hitBoxGrasp.y2 - m_hitBoxGrasp.y1) / 2) + std::abs((enemy->m_hitBoxThrow.y2 - enemy->m_hitBoxThrow.y1) / 2)) return true;
+			if (width < std::abs((m_hitBoxGrasp.x2 - m_hitBoxGrasp.x1) / 2) + std::abs((enemy.m_hitBoxThrow.x2 - enemy.m_hitBoxThrow.x1) / 2) &&
+				height < std::abs((m_hitBoxGrasp.y2 - m_hitBoxGrasp.y1) / 2) + std::abs((enemy.m_hitBoxThrow.y2 - enemy.m_hitBoxThrow.y1) / 2)) return true;
 		}
 	}
 
@@ -885,7 +890,7 @@ void Player::LoadStateDownAerial()
 }
 
 
-void Player::Cancel(Input& input, std::shared_ptr<Player> enemy, std::shared_ptr<Bullet> myBullet, GameManager& gameManager)
+void Player::Cancel(Input& input, Player enemy, std::shared_ptr<Bullet> myBullet, GameManager& gameManager)
 {
 	//キャンセル可能になったら
 	if (m_isPossibleCancel)
@@ -954,7 +959,7 @@ void Player::Cancel(Input& input, std::shared_ptr<Player> enemy, std::shared_ptr
 	}
 }
 
-void Player::InputDelay(Input& input, std::shared_ptr<Player> enemy, std::shared_ptr<Bullet> myBullet, GameManager& gameManager)
+void Player::InputDelay(Input& input, Player enemy, std::shared_ptr<Bullet> myBullet, GameManager& gameManager)
 {
 	//通常攻撃の最初の数Fの間でコマンドが成立していたら上書きする
 	if (m_animCountFrame <= kInputDelayFrame)
@@ -1033,13 +1038,13 @@ void Player::InitPushBox()
 
 
 
-void Player::IdleStandUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::IdleStandUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//攻撃判定リセット
 	ResetAttackBox();
 	ResetGraspBox();
 	//相手の方向を向く
-	LookDir(*enemy);
+	LookDir(enemy);
 
 	//移動量リセット
 	m_velocity.x = 0;
@@ -1065,7 +1070,7 @@ void Player::IdleStandUpdate(Input& input, std::shared_ptr<Player>& enemy, std::
 	m_isCommand = false;
 
 	//相手の体力がなくなったらまたは時間切れ
-	if ((enemy->GetHp() <= 0) && (m_hp > 0) || gameManager.GetTimer() <= 0)
+	if ((enemy.GetHp() <= 0) && (m_hp > 0) || gameManager.GetTimer() <= 0)
 	{
 		m_update = &Player::ResultUpdate;
 		m_draw = &Player::ResultDraw;
@@ -1305,13 +1310,13 @@ void Player::IdleStandDraw(const Camera& camera)
 		kCharaScale, 0.0f, m_handle, true, m_isLeft);
 }
 
-void Player::IdleSquatUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::IdleSquatUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//攻撃判定リセット
 	ResetAttackBox();
 	ResetGraspBox();
 	//相手の方向を向く
-	LookDir(*enemy);
+	LookDir(enemy);
 	//移動量リセット
 	m_velocity.x = 0;
 	//リセット
@@ -1339,7 +1344,7 @@ void Player::IdleSquatUpdate(Input& input, std::shared_ptr<Player>& enemy, std::
 	m_isCommand = false;
 
 	//相手の体力がなくなったらまたは時間切れ
-	if ((enemy->GetHp() <= 0) && (m_hp > 0) || gameManager.GetTimer() <= 0)
+	if ((enemy.GetHp() <= 0) && (m_hp > 0) || gameManager.GetTimer() <= 0)
 	{
 		m_update = &Player::ResultUpdate;
 		m_draw = &Player::ResultDraw;
@@ -1507,7 +1512,7 @@ void Player::IdleSquatDraw(const Camera& camera)
 		kCharaScale, 0.0f, m_handle, true, m_isLeft);
 }
 
-void Player::JumpUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::JumpUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//攻撃判定リセット
 	ResetAttackBox();
@@ -1670,7 +1675,7 @@ void Player::JumpDraw(const Camera& camera)
 		kCharaScale, 0.0f, m_handle, true, m_isLeft);
 }
 
-void Player::AttackStandUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::AttackStandUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	
 	//ガードできない
@@ -1831,7 +1836,7 @@ void Player::AttackStandDraw(const Camera& camera)
 		kCharaScale, 0.0f, m_handle, true, m_isLeft);
 }
 
-void Player::AttackSquatUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::AttackSquatUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//ガードできない
 	m_isGuard = false;
@@ -1978,7 +1983,7 @@ void Player::AttackSquatDraw(const Camera& camera)
 		kCharaScale, 0.0f, m_handle, true, m_isLeft);
 }
 
-void Player::AttackAerialUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::AttackAerialUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//地面についたら
 	if (m_isGround)
@@ -2108,7 +2113,7 @@ void Player::AttackAerialDraw(const Camera& camera)
 }
 
 //空中攻撃後
-void Player::AttackedAerialUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::AttackedAerialUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 #if _DEBUG
 	//コマンドの硬直まで数える
@@ -2162,7 +2167,7 @@ void Player::AttackedAerialDraw(const Camera& camera)
 		kCharaScale, 0.0f, m_handle, true, m_isLeft);
 }
 
-void Player::CommandUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::CommandUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//コマンド技
 	m_isCommand = true;
@@ -2171,7 +2176,7 @@ void Player::CommandUpdate(Input& input, std::shared_ptr<Player>& enemy, std::sh
 	m_isGuard = false;
 	
 	//コマンド技は動きが特殊なものが多いのでCharaのほうで動きを作る
-	m_chara->MovementCommand(*this, *myBullet, *enemy);
+	m_chara->MovementCommand(*this, *myBullet, enemy);
 
 	
 	m_animCountFrame++;
@@ -2306,7 +2311,7 @@ void Player::CommandDraw(const Camera& camera)
 }
 
 
-void Player::GuardStandUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::GuardStandUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//攻撃判定リセット
 	ResetAttackBox();
@@ -2363,7 +2368,7 @@ void Player::GuardStandDraw(const Camera& camera)
 		kCharaScale, 0.0f, m_handle, true, m_isLeft);
 }
 
-void Player::GuardSquatUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::GuardSquatUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//攻撃判定リセット
 	ResetAttackBox();
@@ -2420,7 +2425,7 @@ void Player::GuardSquatDraw(const Camera& camera)
 }
 
 //投げ
-void Player::GraspUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::GraspUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//ガードできない
 	m_isGuard = false;
@@ -2537,7 +2542,7 @@ void Player::GraspUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shar
 			m_chara->GetHitBoxThrowFront(*this);
 		}
 		//セット
-		enemy->SetThrowVelo(throwVelo);
+		enemy.SetThrowVelo(throwVelo);
 
 		DrawString(600, 200, "投げが当たった\n", 0xff0000);
 		//当たり判定リセット
@@ -2549,7 +2554,7 @@ void Player::GraspUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shar
 		{
 			posOffset.x *= -1;
 		}
-		enemy->SetPos(m_pos + posOffset);
+		enemy.SetPos(m_pos + posOffset);
 		//投げに移行
 		ResetPushBox();//押し合い判定を消す
 		m_update = &Player::ThrowUpdate;
@@ -2578,7 +2583,7 @@ void Player::GraspDraw(const Camera& camera)
 }
 
 //投げる
-void Player::ThrowUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::ThrowUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//ガードできない
 	m_isGuard = false;
@@ -2597,7 +2602,7 @@ void Player::ThrowUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shar
 			//SE再生
 			ThrowSE();
 			// 投げられ状態にする
-			enemy->OnIsThrown();
+			enemy.OnIsThrown();
 		}
 
 		//アニメーションの数が最大まで行ったとき
@@ -2654,7 +2659,7 @@ void Player::ThrowDraw(const Camera& camera)
 		kCharaScale, 0.0f, m_handle, true, m_isLeft);
 }
 //投げられる
-void Player::BeThrownUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::BeThrownUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//移動量リセット
 	m_velocity.x = 0;
@@ -2665,7 +2670,7 @@ void Player::BeThrownUpdate(Input& input, std::shared_ptr<Player>& enemy, std::s
 	m_isGuard = false;
 
 	//コマ投げは投げ抜けできない
-	if (!enemy->IsCommand())
+	if (!enemy.IsCommand())
 	{
 		if (m_animCountFrame <= kCanThrowEscapeFrame)
 		{
@@ -2693,7 +2698,7 @@ void Player::BeThrownUpdate(Input& input, std::shared_ptr<Player>& enemy, std::s
 			{
 				m_isThrowSuccess = true;
 				//投げぬけ
-				enemy->LoadStateThrowEscape();
+				enemy.LoadStateThrowEscape();
 				//立ち
 				m_update = &Player::ThrowEscapeUpdate;
 				m_draw = &Player::ThrowEscapeDraw;
@@ -2719,7 +2724,7 @@ void Player::BeThrownUpdate(Input& input, std::shared_ptr<Player>& enemy, std::s
 		//衝突判定復活
 		InitPushBox();
 		//投げのダメージ
-		m_hp -= enemy->GetGiveDamage();
+		m_hp -= enemy.GetGiveDamage();
 
 		m_update = &Player::DownAerialUpdate;
 		m_draw = &Player::DownAerialDraw;
@@ -2767,7 +2772,7 @@ void Player::BeThrownDraw(const Camera& camera)
 }
 
 //投げ抜け
-void Player::ThrowEscapeUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::ThrowEscapeUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//攻撃判定リセット
 	ResetAttackBox();
@@ -2834,7 +2839,7 @@ void Player::ThrowEscapeDraw(const Camera& camera)
 		kCharaScale, 0.0f, m_handle, true, m_isLeft);
 }
 
-void Player::DamageUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::DamageUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//やられ判定
 	m_chara->GetHitBoxHitStand(*this);
@@ -2907,7 +2912,7 @@ void Player::DamageDraw(const Camera& camera)
 		kCharaScale, m_angle, m_handle, true, m_isLeft);
 }
 
-void Player::DamageSquatUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::DamageSquatUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 
 }
@@ -2918,7 +2923,7 @@ void Player::DamageSquatDraw(const Camera& camera)
 
 
 //ダウン
-void Player::DownUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::DownUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//攻撃判定リセット
 	ResetAttackBox();
@@ -2990,7 +2995,7 @@ void Player::DownDraw(const Camera& camera)
 		kCharaScale, m_angle, m_handle, true, m_isLeft);
 }
 
-void Player::DownAerialUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::DownAerialUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//攻撃判定リセット
 	ResetAttackBox();
@@ -3045,7 +3050,7 @@ void Player::DownAerialDraw(const Camera& camera)
 }
 
 //起き上がり
-void Player::StandUpUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::StandUpUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	m_animCountFrame++;
 	//ガードできない
@@ -3101,7 +3106,7 @@ void Player::StandUpDraw(const Camera& camera)
 		kCharaScale, 0.0f, m_handle, true, m_isLeft);
 }
 
-void Player::ResultUpdate(Input& input, std::shared_ptr<Player>& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
+void Player::ResultUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet>& myBullet, GameManager& gameManager)
 {
 	//判定を消す
 	ResetAttackBox();
@@ -3117,10 +3122,10 @@ void Player::ResultUpdate(Input& input, std::shared_ptr<Player>& enemy, std::sha
 
 	
 	//勝ってたら勝利ポーズ
-	if (m_animCountFrame >= kChangeWinPoseFrame && m_hp > enemy->GetHp())
+	if (m_animCountFrame >= kChangeWinPoseFrame && m_hp > enemy.GetHp())
 	{
 		//リセットする
-		if (m_animCountFrame == kChangeWinPoseFrame && m_hp > enemy->GetHp())
+		if (m_animCountFrame == kChangeWinPoseFrame && m_hp > enemy.GetHp())
 		{
 			m_animIndex = 0;
 		}

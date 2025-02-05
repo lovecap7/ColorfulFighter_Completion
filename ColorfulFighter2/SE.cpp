@@ -1,17 +1,8 @@
 #include "SE.h"
 #include <DxLib.h>
 SE::SE():
-	m_isPlay(false)
-	//m_seHandle(-1),
-	//m_seHit1(LoadSoundMem("./SE/Hit/Hit1.mp3")),
-	//m_seHit2(LoadSoundMem("./SE/Hit/Hit2.mp3")),
-	//m_seGuard(LoadSoundMem("./SE/Hit/Guard.mp3")),
-	//m_seRound1(LoadSoundMem("./SE/Round/Round1.mp3")),
-	//m_seRound2(LoadSoundMem("./SE/Round/Round2.mp3")),
-	//m_seRound3(LoadSoundMem("./SE/Round/Round3.mp3")),
-	//m_seRoundOver(LoadSoundMem("./SE/Round/RoundOver.mp3")),
-	//m_seFight(LoadSoundMem("./SE/Round/Fight.mp3")),
-	//m_seKo(LoadSoundMem("./SE/uwauwa/uwauwa.mp3"))
+	m_isPlay(false),
+	m_seHandle(-1)
 {
 }
 

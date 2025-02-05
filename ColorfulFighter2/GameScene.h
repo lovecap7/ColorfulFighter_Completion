@@ -23,6 +23,7 @@ private:
     std::shared_ptr<Bullet> m_bullet2;
     //サウンド
     std::shared_ptr<BGM> m_bgm;
+    int m_bgmHandle;
     //ステージの画像
     int m_floorBaseHandle;//床
     int m_backBaseHandle;//背景

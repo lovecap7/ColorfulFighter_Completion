@@ -172,10 +172,11 @@ GameScene::GameScene(SceneController& controller):
 	m_camera = std::make_shared<Camera>();
 	//BGM
 	m_bgm = std::make_shared<BGM>();
-	int bgmhandle = LoadSoundMem("./BGM/BGM_Stage2.mp3");
-	m_bgm->SetBGM(bgmhandle);
+	m_bgmHandle = LoadSoundMem("./BGM/BGM_Stage2.mp3");
+	m_bgm->SetBGM(m_bgmHandle);
 	m_bgm->Volume(kBgmVolume);
 	m_bgm->PlayLoop();
+
 	//初期化
 	GameInit();
 }
@@ -189,6 +190,9 @@ GameScene::~GameScene()
 	}
 	DeleteGraph(m_backBaseHandle);
 	DeleteGraph(m_floorBaseHandle);
+	DeleteGraph(m_bgmHandle);
+	m_player1->End();
+	m_player2->End();
 }
 
 void GameScene::Update(Input& input, Input& input2)
@@ -215,8 +219,8 @@ void GameScene::Update(Input& input, Input& input2)
 	//ヒットストップ中はUpdateを止める
 	if (!m_gameManager->IsHitStop() && m_gameManager->IsStartRound())
 	{
-		m_player1->Update(input, m_player2, m_bullet1, *m_gameManager);
-		m_player2->Update(input2, m_player1, m_bullet2, *m_gameManager);
+		m_player1->Update(input, *m_player2, m_bullet1, *m_gameManager);
+		m_player2->Update(input2, *m_player1, m_bullet2, *m_gameManager);
 		m_bullet1->Update(*m_player2, *m_bullet2, *m_camera);
 		m_bullet2->Update(*m_player1, *m_bullet1, *m_camera);
 		m_gameManager->Update(*m_player1, *m_player2, *m_bullet1, *m_bullet2,

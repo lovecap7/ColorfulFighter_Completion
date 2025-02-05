@@ -32,7 +32,8 @@ private:
 	void DrawBackGround();
     //BGM
     std::shared_ptr<BGM> m_bgm;
-    int m_menuBgm;
+    int m_resultBgmHandle;
+    int m_menuBgmHandle;
     //SE
     std::shared_ptr<SE> m_seP1;
     std::shared_ptr<SE> m_seP2;
@@ -75,6 +76,8 @@ private:
     //フェードインするために使う
     std::shared_ptr<FadeManager> m_fadeManager;
     bool m_isFadeOut;
+    //Loadingの時に出す画像
+    int m_loadingHandle;
 public:
     ResultScene(SceneController& controller);
     ~ResultScene();
