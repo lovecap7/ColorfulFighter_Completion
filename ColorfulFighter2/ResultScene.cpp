@@ -80,8 +80,7 @@ ResultScene::ResultScene(SceneController& controller) :
 	m_selectSeHandle(LoadSoundMem("./SE/Select/ReadySE.mp3")),
 	m_cursorMoveSehandle(LoadSoundMem("./SE/Select/CursorMoveSE.mp3")),
 	m_serifHandle(-1),
-	m_backGroundHandle(LoadGraph("./img/Result/ResultBack.png")),
-	m_loadingHandle(LoadGraph("./img/Loading/Operation.png"))
+	m_backGroundHandle(LoadGraph("./img/Result/ResultBack.png"))
 {
 	int serif;
 	switch (GetRand(kSerifMaxIndex))
@@ -211,6 +210,11 @@ ResultScene::ResultScene(SceneController& controller) :
 
 	//フェードするときに使う
 	m_fadeManager = std::make_shared<FadeManager>();
+
+	//三項演算子
+	//条件 ? trueなら : falseなら;
+	std::string loadingGraphPath = GetRand(1) ? "./img/Loading/kotu1.png" : "./img/Loading/kotu2.png";
+	m_loadingHandle = LoadGraph(loadingGraphPath.c_str());
 }
 
 ResultScene::~ResultScene()
@@ -574,5 +578,11 @@ void ResultScene::Draw()
 
 	//フェード
 	m_fadeManager->DrawBlackFade(m_isFadeOut);
+
+	//Loading
+	if (m_fadeManager->IsFinishFadeOut())
+	{
+		DrawGraph(0, 0, m_loadingHandle, false);
+	}
 }
 
