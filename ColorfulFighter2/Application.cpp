@@ -82,6 +82,10 @@ void Application::Run()
 		{
 
 		}
+		if (CheckHitKey(KEY_INPUT_ESCAPE))
+		{
+			break;
+		}
 	}
 }
 
