@@ -165,7 +165,7 @@ private:
 	//スティックの方向
 	enum class StickDir
 	{
-		Command,		//テンキー表示したいから0を適当に用意してみた
+		Command,	//テンキー表示したいから0を適当に用意してみた
 		LeftDown,	//1
 		Down,		//2
 		RightDown,	//3

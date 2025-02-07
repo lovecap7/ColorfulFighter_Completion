@@ -1090,6 +1090,18 @@ void Player::IdleStandUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet
 		m_isGuard = false;
 	}
 
+	//下にスティックを倒したとき
+	if (input.IsPress("Down"))
+	{
+		//しゃがみ
+		m_update = &Player::IdleSquatUpdate;
+		m_draw = &Player::IdleSquatDraw;
+		m_animIndex = 0;
+		m_animCountFrame = 0;
+		(this->*m_update)(input, enemy, myBullet, gameManager);
+		return;
+	}
+
 	////////////////////攻撃//////////////////////////////////////
 	//両方trueなら投げ
 	bool isLightPunch = false;
@@ -1265,17 +1277,7 @@ void Player::IdleStandUpdate(Input& input, Player& enemy, std::shared_ptr<Bullet
 		m_animCountFrame = 0;
 		return;
 	}
-	//下にスティックを倒したとき
-	if (input.IsPress("Down"))
-	{
-		//しゃがみ
-		m_update = &Player::IdleSquatUpdate;
-		m_draw = &Player::IdleSquatDraw;
-		m_animIndex = 0;
-		m_animCountFrame = 0;
-		(this->*m_update)(input, enemy, myBullet, gameManager);
-		return;
-	}
+	
 
 	//戦闘開始前のUpdateを止めてるときにこのアニメーションだけは止めたくないのでここに書く
 	//アニメーションの1枚目を0番として数えるので
