@@ -2674,7 +2674,7 @@ void Chara::GetHitBoxCommand2(Player& player)
 	throwBox.y2 = 0;
 	//UŒ‚
 	attackBox.x1 = 60;
-	attackBox.y1 = -300;
+	attackBox.y1 = -280;
 	attackBox.x2 = 200;
 	attackBox.y2 = 50;
 	//“Š‚°
