@@ -15,14 +15,14 @@ class Player
 {
 private:
 	PlayerIndex m_playerIndex;	//自分がプレイヤー1なのか2なのか
-	Vector3 m_pos;		//プレイヤーの座標
-	Vector3 m_velocity;	//プレイヤーの移動量
-	float m_angle;//回転
-	float m_hp;
-	Vector3 m_jumpVelo;		//ジャンプの移動量
-	Vector3 m_giveAttackVelo;//攻撃によって相手を動かす力
-	Vector3 m_giveThrowVelo;//投げが与える力
-	int m_handle;		//プレイヤーの現在の画像
+	Vector3		m_pos;		//プレイヤーの座標
+	Vector3	    m_velocity;	//プレイヤーの移動量
+	float		m_angle;//回転
+	float		m_hp;
+	Vector3		m_jumpVelo;		//ジャンプの移動量
+	Vector3		m_giveAttackVelo;//攻撃によって相手を動かす力
+	Vector3		m_giveThrowVelo;//投げが与える力
+	int			m_handle;		//プレイヤーの現在の画像
 	//キャラクター
 	std::shared_ptr<Chara> m_chara;
 	//プレイヤーの状態管理
@@ -37,7 +37,7 @@ private:
 	bool m_isThrowSuccess;	//trueなら投げ成功
 	bool m_isCommand;		//trueならコマンド技を行っている
 	bool m_isPossibleCancel;//硬直をキャンセルできる
-	int m_cancelFrameCount;
+	int	 m_cancelFrameCount;
 	void Cancel(Input& input, Player enemy, std::shared_ptr<Bullet> myBullet, GameManager& gameManager);//キャンセル
 	void InputDelay(Input& input, Player enemy, std::shared_ptr<Bullet> myBullet, GameManager& gameManager);//ボタンを押して技が確定するまでの処理
 	bool CheckDead();//HPの状態を管理
@@ -67,12 +67,12 @@ private:
 	int m_oneAnimIntervalFrame;	//1枚のアニメーションにかかるフレーム
 	//攻撃手段　パンチとかキックとか
 	AttackTypes m_attackType;
-	int m_startAttackFrame;//攻撃の発生
-	int m_finishAttackFrame;//持続
-	int m_giveNoActFrame;	//自分が攻撃したとき相手が動けないフレーム
-	int m_giveGuardFrame;	//自分が攻撃したとき相手がガードをして動けないフレーム
-	float m_giveDamage;		//相手に与えるダメージ
-	int m_guardFrame;		//自分がガードで動けないフレーム
+	int		m_startAttackFrame;//攻撃の発生
+	int		m_finishAttackFrame;//持続
+	int		m_giveNoActFrame;	//自分が攻撃したとき相手が動けないフレーム
+	int		m_giveGuardFrame;	//自分が攻撃したとき相手がガードをして動けないフレーム
+	float	m_giveDamage;		//相手に与えるダメージ
+	int	    m_guardFrame;		//自分がガードで動けないフレーム
 	Vector3 m_knockback;		//自分が吹っ飛ばされる力
 	//敵に攻撃を当てたかどうか
 	bool CheckHit(Player& enemy);
