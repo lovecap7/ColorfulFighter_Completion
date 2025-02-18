@@ -3,7 +3,6 @@
 #    http://delphi.wikia.com/wiki/Delphi_File_Extensions
 #
 # Delphi compiler-generated binaries (safe to delete)
-*.exe
 *.dll
 *.bpl
 *.bpi
