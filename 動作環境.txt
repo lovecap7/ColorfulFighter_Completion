@@ -1,0 +1,3 @@
+確認済み動作環境
+OS  :	 Windows11
+GPU : 	 NVIDIA GeForce RTX 4060 Ti
